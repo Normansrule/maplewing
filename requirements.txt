@@ -1,0 +1,6 @@
+# Simulator and tests (Ubuntu / WSL2: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt)
+numpy>=1.26
+scipy>=1.11
+pytest>=8
+# Charts for the README (tools/charts.py)
+matplotlib>=3.8

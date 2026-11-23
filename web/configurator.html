@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maplewing Configurator</title>
+<meta name="description" content="Shape a ring-tailed, rotor-recovered rocket and see stability, apogee, descent rate, drift and cost live.">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<script>try{const t=localStorage.getItem("mw-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+<style>
+/* Fonts are vendored (docs/vendor/fonts, SIL OFL) so the desktop app works offline. */
+@font-face{font-family:"Archivo";src:url("../vendor/fonts/archivo-latin-standard-normal.woff2") format("woff2-variations");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("../vendor/fonts/geist-mono-latin-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("../vendor/fonts/geist-mono-latin-500-normal.woff2") format("woff2");font-weight:500;font-display:swap}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.back{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--f-display);color:var(--ink);text-decoration:none;min-height:44px}
+.back:hover{color:var(--red)}
+.tbtn{font:500 13px var(--f-mono);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;min-height:40px;padding:0 14px;cursor:pointer}
+/* Layout: Concept A "Samara" (provisional). Drawing left, controls right; one column on phones. */
+:root{
+  --sky1:#dcecf8; --sky2:#f6fafd; --ink:#101214; --soft:#4b5560; --line:#c9d6e1; --panel:#ffffff; --red:#c4261c;
+  --ok:#1f6b3a; --okbg:#e2f0e6; --warn:#8a5a00; --warnbg:#fbf0d6; --bad:#b0231a; --badbg:#f8e0dd;
+  --f-display:"Archivo", "Helvetica Neue", Arial, sans-serif; --f-mono:"Geist Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--sky1:#0f1a26;--sky2:#0b0f14;--ink:#eef1f4;--soft:#9aa6b2;--line:#253140;--panel:#121820;--red:#ef5244;--ok:#8fd6a5;--okbg:#14261b;--warn:#f0c46a;--warnbg:#2a2210;--bad:#ff8a7e;--badbg:#2c1513;color-scheme:dark}}
+:root[data-theme="dark"]{--sky1:#0f1a26;--sky2:#0b0f14;--ink:#eef1f4;--soft:#9aa6b2;--line:#253140;--panel:#121820;--red:#ef5244;--ok:#8fd6a5;--okbg:#14261b;--warn:#f0c46a;--warnbg:#2a2210;--bad:#ff8a7e;--badbg:#2c1513;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--sky2)}
+body{margin:0;background:linear-gradient(180deg,var(--sky1),var(--sky2) 520px);color:var(--ink);font:16px/1.5 var(--f-display);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;min-height:100%}
+.wrap{max-width:1140px;margin:0 auto;display:grid;gap:24px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+h1{margin:0;font:700 clamp(30px,4.6vw,52px)/.95 var(--f-display);font-stretch:112%;letter-spacing:-.035em;text-wrap:balance}
+.prov{font:500 13px var(--f-mono);color:var(--soft)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{font:600 15px var(--f-display);border:0;background:transparent;color:var(--ink);padding:10px 16px;border-radius:999px;min-height:44px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:24px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-height:520px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--panel) 60%,transparent));overflow:hidden}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.legend{position:absolute;left:16px;bottom:14px;font:500 12px var(--f-mono);color:var(--soft);display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:18px}
+.group{display:grid;gap:12px}
+.group h2{margin:0;font:600 13px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.ctl{display:grid;gap:4px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font:500 14px var(--f-display)}
+.ctl output{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);min-height:28px}
+select{font:500 15px var(--f-display);padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);min-height:44px;width:100%}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.ro{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 16px;display:grid;gap:2px;min-width:0}
+.ro small{font:500 12px var(--f-mono);color:var(--soft);letter-spacing:.02em}
+.ro b{font:500 clamp(22px,2.6vw,30px)/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.ro span{font-size:13px;color:var(--soft)}
+.chip{justify-self:start;font:500 12px var(--f-mono);padding:2px 9px;border-radius:99px;margin-top:4px}
+.chip.ok{background:var(--okbg);color:var(--ok)} .chip.warn{background:var(--warnbg);color:var(--warn)} .chip.bad{background:var(--badbg);color:var(--bad)}
+.bom{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px;display:grid;gap:12px}
+.bom h2{margin:0;font:700 22px/1 var(--f-display);font-stretch:108%;letter-spacing:-.02em}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font:400 14px/1.4 var(--f-mono);font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;color:var(--soft);padding:8px 10px;border-bottom:1px solid var(--ink)}
+td{padding:8px 10px;border-bottom:1px solid var(--line)}
+td.n{text-align:right;white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{font:600 15px var(--f-display);background:var(--ink);color:var(--panel);border:0;border-radius:999px;padding:11px 18px;min-height:44px;cursor:pointer}
+.fine{font-size:13px;color:var(--soft);max-width:80ch;margin:0}
+/* Lineup: the five rockets on the shared framework */
+.lineup{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px;display:grid;gap:18px}
+.lineup>header{display:grid;gap:6px}
+.lineup h2{margin:0;font:700 clamp(24px,3vw,32px)/1 var(--f-display);font-stretch:108%;letter-spacing:-.02em;text-wrap:balance}
+.picks{display:flex;flex-wrap:wrap;gap:8px}
+.picks button,.seg.sm button{font:600 14px var(--f-display);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:999px;min-height:44px;cursor:pointer}
+.picks button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.seg.sm{padding:3px}.seg.sm button{border:0}
+.seg.sm button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.lu-row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.lu-row>small{font:500 12px var(--f-mono);color:var(--soft)}
+.lu-errs{margin:0;padding-left:20px;color:var(--bad);font-size:14px}
+.stack{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.stg{border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.stg-h{display:grid;gap:2px}
+.stg-h small{font:500 12px var(--f-mono);color:var(--soft)}
+.stg-h b{font:700 18px/1.2 var(--f-display);font-stretch:104%}
+.stg-h span{font:500 13px var(--f-mono);color:var(--soft)}
+.stg dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.stg dt{color:var(--soft)}.stg dd{margin:0}
+.mods{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.mod{font:500 12px var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.mod span{color:var(--soft)}
+.mod.shared{border-color:var(--red);color:var(--red)}
+.held{border:1px dashed var(--line);border-radius:14px;padding:18px;display:grid;gap:6px;max-width:70ch}
+.held b{font:700 18px/1.2 var(--f-display)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topbar"><a class="back" href="../" aria-label="Back to the Maplewing website"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M8.5 24.5c-2.4-.2-4-2-3.6-4.1.4-2 2.6-3 4.6-2.4l.6.2C13 11 18.6 5.6 26.6 3.6c1.4-.4 2.2 1 1.3 2.1-5.7 6.4-10.1 11.8-15 16.9l.2.6c.4 2-1 3.6-3 3.4z" fill="currentColor"/><circle cx="8.6" cy="21.2" r="3" fill="var(--red)"/></svg>Maplewing</a><button class="tbtn" type="button" id="theme">Theme</button></div>
+  <header>
+    <div style="display:grid;gap:8px">
+      <span class="prov">Configurator · same physics as the Python simulator · design stage, not yet flown</span>
+      <h1>Shape it. Check it. Fly it again.</h1>
+    </div>
+    <div class="seg" role="group" aria-label="Airframe">
+      <button id="b-taproot" aria-pressed="true">Taproot · fins + parachute</button>
+      <button id="b-seedling" aria-pressed="false">Seedling · ring + rotor</button>
+    </div>
+  </header>
+
+  <div class="readouts" aria-live="polite">
+    <div class="ro"><small>Stability margin</small><b id="o-margin">–</b><span id="o-margin-note"></span><span class="chip" id="o-chip">–</span></div>
+    <div class="ro"><small>Apogee above ground</small><b id="o-apogee">–</b><span id="o-speed"></span></div>
+    <div class="ro"><small>Descent rate</small><b id="o-descent">–</b><span id="o-rec"></span></div>
+    <div class="ro"><small>Drift in this wind</small><b id="o-drift">–</b><span id="o-field"></span></div>
+    <div class="ro"><small>Cost per flight</small><b id="o-cost">–</b><span id="o-build"></span></div>
+  </div>
+
+  <div class="main">
+    <div class="stage" id="stage"><div class="legend"><span><i style="background:var(--ink)"></i>CG, center of gravity</span><span><i style="background:var(--red)"></i>CP, center of pressure</span></div></div>
+    <div class="panel">
+      <div class="group"><h2>Motor</h2>
+        <div class="ctl"><label for="motor">Certified motor</label>
+          <select id="motor"><option value="A8_3">Estes A8-3 · 2.3 N·s · $12.99 per 3</option><option value="B6_4" selected>Estes B6-4 · 4.3 N·s · $13.99 per 3</option><option value="C6_5">Estes C6-5 · 8.8 N·s · $13.99 per 3</option></select></div>
+      </div>
+      <div class="group"><h2>Airframe</h2>
+        <div class="ctl"><label for="len">Body length <output id="v-len"></output></label><input type="range" id="len" min="250" max="700" step="5"></div>
+        <div class="ctl" data-for="taproot"><label for="span">Fin span <output id="v-span"></output></label><input type="range" id="span" min="25" max="70" value="45"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="ringD">Ring diameter <output id="v-ringD"></output></label><input type="range" id="ringD" min="40" max="80" value="55"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="chord">Ring chord <output id="v-chord"></output></label><input type="range" id="chord" min="20" max="70" value="40"></div>
+      </div>
+      <div class="group"><h2>Recovery and field</h2>
+        <div class="ctl" data-for="taproot"><label for="chute">Parachute diameter <output id="v-chute"></output></label><input type="range" id="chute" min="150" max="450" step="5" value="305"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="rotor">Rotor diameter <output id="v-rotor"></output></label><input type="range" id="rotor" min="200" max="450" step="5" value="300"></div>
+        <div class="ctl"><label for="wind">Wind <output id="v-wind"></output></label><input type="range" id="wind" min="0" max="20" value="10"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="bom">
+    <div class="row"><h2>Bill of materials</h2><button class="btn" id="copy">Copy as CSV</button></div>
+    <div class="tbl"><table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Status</th></tr></thead><tbody id="bom"></tbody></table></div>
+    <p class="fine" id="copied" hidden>Copied. Paste it into a spreadsheet.</p>
+  </section>
+
+  <section class="lineup" aria-labelledby="lu-title">
+    <header>
+      <span class="prov">Shared framework · every stage lands on its own</span>
+      <h2 id="lu-title">The five rockets</h2>
+    </header>
+    <div class="picks" id="lu-pick" role="group" aria-label="Rocket"></div>
+    <div class="held" id="lu-held" hidden>
+      <b>Maplewing-3 · three stages · FAA Class 3 · Level 3</b>
+      <p class="fine">Its design details stay off this page until the export-control review is done. It reuses the Maplewing-2 booster as its middle stage, and every stage lands on its own.</p>
+    </div>
+    <div id="lu-body" style="display:grid;gap:18px">
+      <p class="fine" id="lu-blurb"></p>
+      <div class="lu-row" id="lu-tailwrap" hidden><small>Tail on supersonic stages</small>
+        <div class="seg sm" id="lu-tail" role="group" aria-label="Tail on supersonic stages"><button type="button" data-t="fins" aria-pressed="true">Fins (default)</button><button type="button" data-t="ring" aria-pressed="false">Ring (untested above Mach 1)</button></div>
+      </div>
+      <div class="readouts" aria-live="polite">
+        <div class="ro"><small>FAA class</small><b id="lu-class">–</b><span id="lu-class-n"></span></div>
+        <div class="ro"><small>NAR/TRA certification</small><b id="lu-cert">–</b><span id="lu-cert-n"></span></div>
+        <div class="ro"><small>Apogee</small><b id="lu-apo">–</b><span id="lu-apo-n"></span></div>
+        <div class="ro"><small>Top speed</small><b id="lu-mach">–</b><span id="lu-mach-n"></span></div>
+        <div class="ro"><small>Scope rules</small><span class="chip" id="lu-rules">–</span><span>certified motors, passive, own landing per stage</span></div>
+      </div>
+      <ul class="lu-errs" id="lu-errs"></ul>
+      <ol class="stack" id="lu-stack" aria-label="Stages, bottom to top"></ol>
+      <p class="fine">Red-outlined modules are designed once and reused on more than one stage. Rotor and parachute sizes are worked out for a 6.5 m/s landing, a rule of thumb to confirm with the range safety officer (RSO). Masses and drag are assumptions until CAD and weighing replace them. Apogees are vertical-flight upper bounds; real flights land lower. Big reload prices still need vendor quotes.</p>
+    </div>
+  </section>
+
+  <p class="fine">Same equations as the Python sim (extended Barrowman margin, 1-D flight from a 1,300 m site, real ThrustCurve.org thrust curves from National Association of Rocketry (NAR) certification data), checked by an automated test to within 0.1% on apogee. Drag is calibrated to Estes' published Alpha III apogee for Taproot and assumed for the ring tail. Rotor descent uses an effective drag coefficient of 1.08 from the blade-element model at 6° pitch, until drone drops measure it. Drift assumes the wind holds all the way up. Prices were checked on Nov 1 to 2, 2026; "estimate" rows are not quotes. NAR model code: 1,500 g liftoff limit, launch winds of 20 mph or less, and certified motors only.</p>
+</main>
+
+<script>
+(function(){
+const G=9.80665, rho=h=>{const T=288.15-0.0065*h;return 1.225*Math.pow(T/288.15,4.2559)};
+// Real ThrustCurve.org curves (see sim/motors/motors.json). Linear interpolation; propellant
+// burns in proportion to impulse delivered, exactly as sim/phase0_compare.py does.
+function prepMotor(m){const c=m.curve,cum=[0];for(let i=1;i<c.length;i++)cum.push(cum[i-1]+(c[i][0]-c[i-1][0])*(c[i][1]+c[i-1][1])/2);m.cum=cum;m.I=cum[cum.length-1];m.tb=c[c.length-1][0];return m}
+function seg(c,t){let lo=0,hi=c.length-1;while(hi-lo>1){const mid=(lo+hi)>>1;if(c[mid][0]<=t)lo=mid;else hi=mid}return lo}
+function thrust(m,t){if(t<=0||t>=m.tb)return 0;const c=m.curve,i=seg(c,t),[t0,f0]=c[i],[t1,f1]=c[i+1];return f0+(f1-f0)*(t-t0)/(t1-t0)}
+function motorMass(m,t){if(t<=0)return m.mt;if(t>=m.tb)return m.mt-m.mp;const c=m.curve,i=seg(c,t),[t0,f0]=c[i];return m.mt-m.mp*(m.cum[i]+(t-t0)*(f0+thrust(m,t))/2)/m.I}
+const MOTORS={A8_3:prepMotor({name:"Estes A8-3",curve:[[0,0],[0.041,0.512],[0.084,2.115],[0.127,4.358],[0.166,6.794],[0.192,8.588],[0.206,9.294],[0.226,9.73],[0.236,8.845],[0.247,7.179],[0.261,5.063],[0.277,3.717],[0.306,3.205],[0.351,2.884],[0.405,2.499],[0.467,2.371],[0.532,2.307],[0.589,2.371],[0.632,2.371],[0.652,2.243],[0.668,1.794],[0.684,1.153],[0.703,0.448],[0.73,0]],mp:0.0033,mt:0.0163,price:12.99/3,max:0.085}),
+              B6_4:prepMotor({name:"Estes B6-4",curve:[[0,0],[0.036,1.364],[0.064,2.727],[0.082,4.215],[0.111,6.694],[0.135,9.05],[0.146,9.545],[0.172,11.901],[0.181,12.149],[0.191,11.901],[0.211,9.174],[0.239,7.314],[0.264,6.074],[0.275,5.95],[0.333,5.207],[0.394,4.835],[0.445,4.835],[0.556,4.339],[0.667,4.587],[0.723,4.339],[0.78,4.339],[0.793,4.091],[0.812,2.603],[0.833,1.24],[0.857,0]],mp:0.0056,mt:0.0191,price:13.99/3,max:0.113}),
+              C6_5:prepMotor({name:"Estes C6-5",curve:[[0,0],[0.031,0.946],[0.092,4.826],[0.139,9.936],[0.192,14.09],[0.209,11.446],[0.231,7.381],[0.248,6.151],[0.292,5.489],[0.37,4.921],[0.475,4.448],[0.671,4.258],[0.702,4.542],[0.723,4.164],[0.85,4.448],[1.063,4.353],[1.211,4.353],[1.242,4.069],[1.303,4.258],[1.468,4.353],[1.656,4.448],[1.821,4.448],[1.834,2.933],[1.847,1.325],[1.86,0]],mp:0.0108,mt:0.0241,price:13.99/3,max:0.113})};
+function finsCna(N,s,cr,ct,xs,d){const lf=Math.hypot(s,xs+ct/2-cr/2);const c=(4*N*(s/d)**2)/(1+Math.sqrt(1+(2*lf/(cr+ct))**2));const r=d/2;return c*(1+r/(s+r))}
+function finsXcp(xf,s,cr,ct,xs){return xf+xs*(cr+2*ct)/(3*(cr+ct))+(cr+ct-cr*ct/(cr+ct))/6}
+function fly(dry,mot,cd,d){const A=Math.PI*d*d/4;
+  let t=0,h=0,v=0,vmax=0;const dt=0.002;
+  const acc=(t,h,v)=>{const m=dry+motorMass(mot,t);const F=thrust(mot,t);let a=(F-0.5*rho(1300+h)*v*Math.abs(v)*cd*A)/m-G;if(h<=0&&a<0&&t<mot.tb)a=0;return a};
+  while(t<60){const k1=acc(t,h,v),k2=acc(t+dt/2,h+v*dt/2,v+k1*dt/2),k3=acc(t+dt/2,h+(v+k1*dt/2)*dt/2,v+k2*dt/2),k4=acc(t+dt,h+(v+k2*dt/2)*dt,v+k3*dt);
+    const nh=h+dt*(v+2*(v+k1*dt/2)+2*(v+k2*dt/2)+(v+k3*dt))/6; v+=dt*(k1+2*k2+2*k3+k4)/6; h=nh; t+=dt; vmax=Math.max(vmax,v); if(t>mot.tb&&v<=0)break}
+  return {apogee:h,tApo:t,vmax}}
+function evaluate(s){
+  const d=0.0248, mot=MOTORS[s.motor], L=s.len/1000; let r={};
+  if(s.kind==="taproot"){ // Estes Alpha III class at L = 307 mm
+    const dry=0.034+0.06*(L-0.307), cgDry=0.165*(L/0.307), sp=s.span/1000, mcg=L-0.037, xf=L-0.062;
+    const cnT=finsCna(3,sp,0.060,0.025,0.040,d), xT=finsXcp(xf,sp,0.060,0.025,0.040);
+    r.cp=(2*0.466*0.075+cnT*xT)/(2+cnT); r.m0=dry+mot.mt; r.cg=(dry*cgDry+mot.mt*mcg)/r.m0; r.dry=dry; r.cd=0.643+0.6*(sp-0.045);
+    const md=dry+mot.mt-mot.mp, S=Math.PI*(s.chute/1000)**2/4; r.vd=Math.sqrt(2*md*G/(rho(1300)*1.5*S)); r.rec="parachute, Cd 1.5";
+  } else { // Seedling ring tail, Phase 0 design at L = 550 mm
+    const Dm=s.ringD/1000,c=s.chord/1000,dry=0.068+0.04*(L-0.55)+0.2*(Dm-0.055)+0.1*(c-0.04)+0.03*(s.rotor/1000-0.30),cgDry=0.32*(L/0.55),mcg=L-0.05;
+    const h=(Dm-d)/2,N=Math.PI*Dm/h,xf=L-c-0.005,cnT=finsCna(N,h,c,c,0,d),xT=finsXcp(xf,h,c,c,0);
+    r.cp=(2*0.466*0.10+cnT*xT)/(2+cnT); r.m0=dry+mot.mt; r.cg=(dry*cgDry+mot.mt*mcg)/r.m0; r.dry=dry; r.cd=0.70+0.5*(Dm-0.055)+3*(c-0.04);
+    const md=dry+mot.mt-mot.mp, S=Math.PI*(s.rotor/1000)**2/4; r.vd=Math.sqrt(2*md*G/(rho(1300)*1.08*S)); r.rec="rotor, effective Cd 1.08";
+  }
+  r.margin=(r.cp-r.cg)/d; Object.assign(r,fly(r.dry,mot,r.cd,d)); r.mot=mot;
+  r.drift=(r.apogee/r.vd)*s.wind*0.44704; r.overweight=r.m0>mot.max; return r;
+}
+const BOM={taproot:[["Estes Alpha III launch set (rocket, pad, controller)",1,39.99,"verified"],["Recovery wadding, 75 sheets",1,5.99,"verified"],["Controller batteries",1,5,"estimate"]],
+           seedling:[["Body tube, nose cone, 18 mm motor mount",1,15,"estimate"],["PETG for ring tail and rotor hub",1,3,"estimate"],["Rotor blades (balsa or printed)",1,4,"estimate"],["Launch pad and controller",1,30,"estimate"]]};
+const st={kind:"taproot",motor:"B6_4",len:307,span:45,ringD:55,chord:40,chute:305,rotor:300,wind:10};
+const $=id=>document.getElementById(id);
+try{const saved=JSON.parse(localStorage.getItem("mw-cfg")||"null");if(saved)Object.assign(st,saved)}catch(e){}
+const cv=document.createElement("canvas"); $("stage").prepend(cv); const ctx=cv.getContext("2d");
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function draw(r){
+  const box=$("stage").getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);cv.width=box.width*dpr;cv.height=box.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const W=box.width,H=box.height,ink=css("--ink"),red=css("--red"),soft=css("--soft"),panel=css("--panel");ctx.clearRect(0,0,W,H);
+  const L=st.len/1000,sc=Math.min((H*0.8)/0.75,(W*0.9)/0.75),x0=W/2-L*sc/2,y=H*0.48,d=0.0248*sc*1.6;
+  ctx.lineWidth=1.5;ctx.strokeStyle=ink;ctx.fillStyle=panel;
+  const Ln=(st.kind==="taproot"?0.075:0.10)*sc;
+  ctx.beginPath();ctx.moveTo(x0,y);ctx.quadraticCurveTo(x0+Ln*0.2,y-d/2,x0+Ln,y-d/2);ctx.lineTo(x0+L*sc,y-d/2);ctx.lineTo(x0+L*sc,y+d/2);ctx.lineTo(x0+Ln,y+d/2);ctx.quadraticCurveTo(x0+Ln*0.2,y+d/2,x0,y);ctx.fill();ctx.stroke();
+  if(st.kind==="taproot"){const sp=st.span/1000*sc,cr=0.060*sc,ct=0.025*sc,xs=0.040*sc,xf=x0+(L-0.062)*sc;
+    for(const s of [-1,1]){ctx.beginPath();ctx.moveTo(xf,y+s*d/2);ctx.lineTo(xf+xs,y+s*(d/2+sp));ctx.lineTo(xf+xs+ct,y+s*(d/2+sp));ctx.lineTo(xf+cr,y+s*d/2);ctx.stroke()}
+    ctx.strokeStyle=red;ctx.beginPath();ctx.ellipse(x0+Ln*1.6,y,d*0.25,d*0.35,0,0,7);ctx.stroke();
+  } else {const Dm=st.ringD/1000*sc*1.6/1.6,c=st.chord/1000*sc,xf=x0+(L-st.chord/1000-0.005)*sc,R=(st.ringD/1000)*sc*0.8*1.6;
+    ctx.strokeRect(xf,y-R-d*0.1,c,d*0.2);ctx.strokeRect(xf,y+R-d*0.1,c,d*0.2);ctx.beginPath();ctx.moveTo(xf+c/2,y-d/2);ctx.lineTo(xf+c/2,y-R);ctx.moveTo(xf+c/2,y+d/2);ctx.lineTo(xf+c/2,y+R);ctx.stroke();
+    ctx.strokeStyle=red;ctx.lineWidth=2.5;const hx=x0+Ln*1.05,bl=(st.rotor/1000/2)*sc*0.9;ctx.beginPath();ctx.moveTo(hx,y-d/2-2);ctx.lineTo(hx+bl,y-d/2-2);ctx.moveTo(hx,y+d/2+2);ctx.lineTo(hx+bl,y+d/2+2);ctx.stroke();}
+  const xg=x0+r.cg*sc,xp=x0+r.cp*sc,my=y+H*0.18;
+  ctx.lineWidth=1;ctx.strokeStyle=soft;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(xg,y);ctx.lineTo(xg,my);ctx.moveTo(xp,y);ctx.lineTo(xp,my);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(xg,my,7,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(xg-7,my);ctx.lineTo(xg+7,my);ctx.moveTo(xg,my-7);ctx.lineTo(xg,my+7);ctx.stroke();
+  ctx.fillStyle=red;ctx.beginPath();ctx.arc(xp,my,5,0,7);ctx.fill();
+  ctx.font="500 12px Geist Mono, ui-monospace, monospace";ctx.fillStyle=ink;ctx.textAlign="center";
+  ctx.fillText("CG "+(r.cg*1000).toFixed(0)+" mm",xg,my+24);ctx.fillStyle=red;ctx.fillText("CP "+(r.cp*1000).toFixed(0)+" mm",xp,my+40);
+  ctx.strokeStyle=soft;ctx.beginPath();ctx.moveTo(Math.min(xg,xp),my+52);ctx.lineTo(Math.max(xg,xp),my+52);ctx.stroke();ctx.fillStyle=soft;ctx.fillText(r.margin.toFixed(2)+" calibers",(xg+xp)/2,my+68);
+}
+function render(){
+  for(const k of ["len","span","ringD","chord","chute","rotor","wind"])$(k).value=st[k];$("motor").value=st.motor;
+  document.querySelectorAll("[data-for]").forEach(e=>e.hidden=e.dataset.for!==st.kind);
+  $("b-taproot").setAttribute("aria-pressed",st.kind==="taproot");$("b-seedling").setAttribute("aria-pressed",st.kind==="seedling");
+  $("v-len").textContent=st.len+" mm";$("v-span").textContent=st.span+" mm";$("v-ringD").textContent=st.ringD+" mm";$("v-chord").textContent=st.chord+" mm";$("v-chute").textContent=st.chute+" mm";$("v-rotor").textContent=st.rotor+" mm";$("v-wind").textContent=st.wind+" mph";
+  const r=evaluate(st);
+  $("o-margin").textContent=r.margin.toFixed(2)+" cal";$("o-margin-note").textContent="CP "+((r.cp-r.cg)*1000).toFixed(0)+" mm behind CG";
+  const chip=$("o-chip");let cls="ok",txt="Stable";if(r.margin<1){cls="bad";txt="Unstable: do not fly"}else if(r.margin<1.5){cls="warn";txt="Marginal: add tail area"}else if(r.margin>4){cls="warn";txt="Over-stable: weathercocks"}chip.className="chip "+cls;chip.textContent=txt;
+  $("o-apogee").textContent=Math.round(r.apogee)+" m";$("o-speed").textContent="max "+Math.round(r.vmax)+" m/s · apogee at "+r.tApo.toFixed(1)+" s";
+  $("o-descent").textContent=r.vd.toFixed(1)+" m/s";$("o-rec").textContent=r.rec;
+  $("o-drift").textContent=Math.round(r.drift)+" m";$("o-field").textContent=r.drift>400?"needs a big field":r.drift>200?"club field":"school field";
+  const per=r.mot.price+(st.kind==="taproot"?0.28:0.28);$("o-cost").textContent="$"+per.toFixed(2);
+  const items=BOM[st.kind].concat([[r.mot.name+" motors, 3-pack",1,r.mot.price*3,"verified"]]);
+  const total=items.reduce((a,i)=>a+i[1]*i[2],0);$("o-build").textContent="first day $"+total.toFixed(0)+(r.overweight?" · over motor's lift limit":"");
+  $("bom").innerHTML=items.map(i=>`<tr><td>${i[0]}</td><td class="n">${i[1]}</td><td class="n">$${i[2].toFixed(2)}</td><td>${i[3]}</td></tr>`).join("")+`<tr><td><b>Total</b></td><td></td><td class="n"><b>$${total.toFixed(2)}</b></td><td></td></tr>`;
+  draw(r);try{localStorage.setItem("mw-cfg",JSON.stringify(st))}catch(e){}
+}
+for(const k of ["len","span","ringD","chord","chute","rotor","wind"])$(k).addEventListener("input",e=>{st[k]=+e.target.value;render()});
+$("motor").addEventListener("change",e=>{st.motor=e.target.value;render()});
+$("b-taproot").addEventListener("click",()=>{st.kind="taproot";st.len=307;render()});
+$("b-seedling").addEventListener("click",()=>{st.kind="seedling";st.len=550;render()});
+$("copy").addEventListener("click",()=>{const rows=[["item","qty","price_usd","status"]].concat([...document.querySelectorAll("#bom tr")].map(tr=>[...tr.children].map(td=>td.textContent.replace("$",""))));const csv=rows.map(r=>r.map(c=>/[,"]/.test(c)?`"${c.replace(/"/g,'""')}"`:c).join(",")).join("\n");
+  const done=()=>{$("copied").hidden=false;setTimeout(()=>$("copied").hidden=true,2500)};
+  navigator.clipboard.writeText(csv).then(done).catch(()=>{const ta=document.createElement("textarea");ta.value=csv;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e){}ta.remove();done()})});
+new ResizeObserver(()=>render()).observe($("stage"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+window.addEventListener("mw-theme",render);
+render();
+})();
+</script>
+<!--BUILD:lineup-->
+<script>
+// Theme toggle shared with the website (remembered on this device only).
+(function(){const r=document.documentElement,b=document.getElementById("theme");
+const dark=()=>r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme: dark)").matches);
+const lab=()=>{b.textContent=dark()?"Light theme":"Dark theme";b.setAttribute("aria-label",dark()?"Switch to light theme":"Switch to dark theme")};lab();
+b.addEventListener("click",()=>{r.dataset.theme=dark()?"light":"dark";lab();try{localStorage.setItem("mw-theme",r.dataset.theme)}catch{}window.dispatchEvent(new Event("mw-theme"))});})();
+</script>
+</body>
+</html>

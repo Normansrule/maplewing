@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maplewing Configurator</title>
+<meta name="description" content="Shape a ring-tailed, rotor-recovered rocket and see stability, apogee, descent rate, drift and cost live.">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<script>try{const t=localStorage.getItem("mw-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+<style>
+/* Fonts are vendored (docs/vendor/fonts, SIL OFL) so the desktop app works offline. */
+@font-face{font-family:"Archivo";src:url("../vendor/fonts/archivo-latin-standard-normal.woff2") format("woff2-variations");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("../vendor/fonts/geist-mono-latin-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("../vendor/fonts/geist-mono-latin-500-normal.woff2") format("woff2");font-weight:500;font-display:swap}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.back{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--f-display);color:var(--ink);text-decoration:none;min-height:44px}
+.back:hover{color:var(--red)}
+.tbtn{font:500 13px var(--f-mono);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;min-height:40px;padding:0 14px;cursor:pointer}
+/* Layout: Concept A "Samara" (provisional). Drawing left, controls right; one column on phones. */
+:root{
+  --sky1:#dcecf8; --sky2:#f6fafd; --ink:#101214; --soft:#4b5560; --line:#c9d6e1; --panel:#ffffff; --red:#c4261c;
+  --ok:#1f6b3a; --okbg:#e2f0e6; --warn:#8a5a00; --warnbg:#fbf0d6; --bad:#b0231a; --badbg:#f8e0dd;
+  --f-display:"Archivo", "Helvetica Neue", Arial, sans-serif; --f-mono:"Geist Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--sky1:#0f1a26;--sky2:#0b0f14;--ink:#eef1f4;--soft:#9aa6b2;--line:#253140;--panel:#121820;--red:#ef5244;--ok:#8fd6a5;--okbg:#14261b;--warn:#f0c46a;--warnbg:#2a2210;--bad:#ff8a7e;--badbg:#2c1513;color-scheme:dark}}
+:root[data-theme="dark"]{--sky1:#0f1a26;--sky2:#0b0f14;--ink:#eef1f4;--soft:#9aa6b2;--line:#253140;--panel:#121820;--red:#ef5244;--ok:#8fd6a5;--okbg:#14261b;--warn:#f0c46a;--warnbg:#2a2210;--bad:#ff8a7e;--badbg:#2c1513;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--sky2)}
+body{margin:0;background:linear-gradient(180deg,var(--sky1),var(--sky2) 520px);color:var(--ink);font:16px/1.5 var(--f-display);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;min-height:100%}
+.wrap{max-width:1140px;margin:0 auto;display:grid;gap:24px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+h1{margin:0;font:700 clamp(30px,4.6vw,52px)/.95 var(--f-display);font-stretch:112%;letter-spacing:-.035em;text-wrap:balance}
+.prov{font:500 13px var(--f-mono);color:var(--soft)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{font:600 15px var(--f-display);border:0;background:transparent;color:var(--ink);padding:10px 16px;border-radius:999px;min-height:44px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:24px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-height:520px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--panel) 60%,transparent));overflow:hidden}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.legend{position:absolute;left:16px;bottom:14px;font:500 12px var(--f-mono);color:var(--soft);display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:18px}
+.group{display:grid;gap:12px}
+.group h2{margin:0;font:600 13px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.ctl{display:grid;gap:4px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font:500 14px var(--f-display)}
+.ctl output{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--red);min-height:28px}
+select{font:500 15px var(--f-display);padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);min-height:44px;width:100%}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.ro{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 16px;display:grid;gap:2px;min-width:0}
+.ro small{font:500 12px var(--f-mono);color:var(--soft);letter-spacing:.02em}
+.ro b{font:500 clamp(22px,2.6vw,30px)/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.ro span{font-size:13px;color:var(--soft)}
+.chip{justify-self:start;font:500 12px var(--f-mono);padding:2px 9px;border-radius:99px;margin-top:4px}
+.chip.ok{background:var(--okbg);color:var(--ok)} .chip.warn{background:var(--warnbg);color:var(--warn)} .chip.bad{background:var(--badbg);color:var(--bad)}
+.bom{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px;display:grid;gap:12px}
+.bom h2{margin:0;font:700 22px/1 var(--f-display);font-stretch:108%;letter-spacing:-.02em}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font:400 14px/1.4 var(--f-mono);font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;color:var(--soft);padding:8px 10px;border-bottom:1px solid var(--ink)}
+td{padding:8px 10px;border-bottom:1px solid var(--line)}
+td.n{text-align:right;white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{font:600 15px var(--f-display);background:var(--ink);color:var(--panel);border:0;border-radius:999px;padding:11px 18px;min-height:44px;cursor:pointer}
+.fine{font-size:13px;color:var(--soft);max-width:80ch;margin:0}
+/* Lineup: the five rockets on the shared framework */
+.lineup{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px;display:grid;gap:18px}
+.lineup>header{display:grid;gap:6px}
+.lineup h2{margin:0;font:700 clamp(24px,3vw,32px)/1 var(--f-display);font-stretch:108%;letter-spacing:-.02em;text-wrap:balance}
+.picks{display:flex;flex-wrap:wrap;gap:8px}
+.picks button,.seg.sm button{font:600 14px var(--f-display);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:999px;min-height:44px;cursor:pointer}
+.picks button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.seg.sm{padding:3px}.seg.sm button{border:0}
+.seg.sm button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.lu-row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.lu-row>small{font:500 12px var(--f-mono);color:var(--soft)}
+.lu-errs{margin:0;padding-left:20px;color:var(--bad);font-size:14px}
+.stack{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.stg{border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.stg-h{display:grid;gap:2px}
+.stg-h small{font:500 12px var(--f-mono);color:var(--soft)}
+.stg-h b{font:700 18px/1.2 var(--f-display);font-stretch:104%}
+.stg-h span{font:500 13px var(--f-mono);color:var(--soft)}
+.stg dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.stg dt{color:var(--soft)}.stg dd{margin:0}
+.mods{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.mod{font:500 12px var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.mod span{color:var(--soft)}
+.mod.shared{border-color:var(--red);color:var(--red)}
+.held{border:1px dashed var(--line);border-radius:14px;padding:18px;display:grid;gap:6px;max-width:70ch}
+.held b{font:700 18px/1.2 var(--f-display)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topbar"><a class="back" href="../" aria-label="Back to the Maplewing website"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M8.5 24.5c-2.4-.2-4-2-3.6-4.1.4-2 2.6-3 4.6-2.4l.6.2C13 11 18.6 5.6 26.6 3.6c1.4-.4 2.2 1 1.3 2.1-5.7 6.4-10.1 11.8-15 16.9l.2.6c.4 2-1 3.6-3 3.4z" fill="currentColor"/><circle cx="8.6" cy="21.2" r="3" fill="var(--red)"/></svg>Maplewing</a><button class="tbtn" type="button" id="theme">Theme</button></div>
+  <header>
+    <div style="display:grid;gap:8px">
+      <span class="prov">Configurator · same physics as the Python simulator · design stage, not yet flown</span>
+      <h1>Shape it. Check it. Fly it again.</h1>
+    </div>
+    <div class="seg" role="group" aria-label="Airframe">
+      <button id="b-taproot" aria-pressed="true">Taproot · fins + parachute</button>
+      <button id="b-seedling" aria-pressed="false">Seedling · ring + rotor</button>
+    </div>
+  </header>
+
+  <div class="readouts" aria-live="polite">
+    <div class="ro"><small>Stability margin</small><b id="o-margin">–</b><span id="o-margin-note"></span><span class="chip" id="o-chip">–</span></div>
+    <div class="ro"><small>Apogee above ground</small><b id="o-apogee">–</b><span id="o-speed"></span></div>
+    <div class="ro"><small>Descent rate</small><b id="o-descent">–</b><span id="o-rec"></span></div>
+    <div class="ro"><small>Drift in this wind</small><b id="o-drift">–</b><span id="o-field"></span></div>
+    <div class="ro"><small>Cost per flight</small><b id="o-cost">–</b><span id="o-build"></span></div>
+  </div>
+
+  <div class="main">
+    <div class="stage" id="stage"><div class="legend"><span><i style="background:var(--ink)"></i>CG, center of gravity</span><span><i style="background:var(--red)"></i>CP, center of pressure</span></div></div>
+    <div class="panel">
+      <div class="group"><h2>Motor</h2>
+        <div class="ctl"><label for="motor">Certified motor</label>
+          <select id="motor"><option value="A8_3">Estes A8-3 · 2.3 N·s · $12.99 per 3</option><option value="B6_4" selected>Estes B6-4 · 4.3 N·s · $13.99 per 3</option><option value="C6_5">Estes C6-5 · 8.8 N·s · $13.99 per 3</option></select></div>
+      </div>
+      <div class="group"><h2>Airframe</h2>
+        <div class="ctl"><label for="len">Body length <output id="v-len"></output></label><input type="range" id="len" min="250" max="700" step="5"></div>
+        <div class="ctl" data-for="taproot"><label for="span">Fin span <output id="v-span"></output></label><input type="range" id="span" min="25" max="70" value="45"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="ringD">Ring diameter <output id="v-ringD"></output></label><input type="range" id="ringD" min="40" max="80" value="55"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="chord">Ring chord <output id="v-chord"></output></label><input type="range" id="chord" min="20" max="70" value="40"></div>
+      </div>
+      <div class="group"><h2>Recovery and field</h2>
+        <div class="ctl" data-for="taproot"><label for="chute">Parachute diameter <output id="v-chute"></output></label><input type="range" id="chute" min="150" max="450" step="5" value="305"></div>
+        <div class="ctl" data-for="seedling" hidden><label for="rotor">Rotor diameter <output id="v-rotor"></output></label><input type="range" id="rotor" min="200" max="450" step="5" value="300"></div>
+        <div class="ctl"><label for="wind">Wind <output id="v-wind"></output></label><input type="range" id="wind" min="0" max="20" value="10"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="bom">
+    <div class="row"><h2>Bill of materials</h2><button class="btn" id="copy">Copy as CSV</button></div>
+    <div class="tbl"><table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Status</th></tr></thead><tbody id="bom"></tbody></table></div>
+    <p class="fine" id="copied" hidden>Copied. Paste it into a spreadsheet.</p>
+  </section>
+
+  <section class="lineup" aria-labelledby="lu-title">
+    <header>
+      <span class="prov">Shared framework · every stage lands on its own</span>
+      <h2 id="lu-title">The five rockets</h2>
+    </header>
+    <div class="picks" id="lu-pick" role="group" aria-label="Rocket"></div>
+    <div class="held" id="lu-held" hidden>
+      <b>Maplewing-3 · three stages · FAA Class 3 · Level 3</b>
+      <p class="fine">Its design details stay off this page until the export-control review is done. It reuses the Maplewing-2 booster as its middle stage, and every stage lands on its own.</p>
+    </div>
+    <div id="lu-body" style="display:grid;gap:18px">
+      <p class="fine" id="lu-blurb"></p>
+      <div class="lu-row" id="lu-tailwrap" hidden><small>Tail on supersonic stages</small>
+        <div class="seg sm" id="lu-tail" role="group" aria-label="Tail on supersonic stages"><button type="button" data-t="fins" aria-pressed="true">Fins (default)</button><button type="button" data-t="ring" aria-pressed="false">Ring (untested above Mach 1)</button></div>
+      </div>
+      <div class="readouts" aria-live="polite">
+        <div class="ro"><small>FAA class</small><b id="lu-class">–</b><span id="lu-class-n"></span></div>
+        <div class="ro"><small>NAR/TRA certification</small><b id="lu-cert">–</b><span id="lu-cert-n"></span></div>
+        <div class="ro"><small>Apogee</small><b id="lu-apo">–</b><span id="lu-apo-n"></span></div>
+        <div class="ro"><small>Top speed</small><b id="lu-mach">–</b><span id="lu-mach-n"></span></div>
+        <div class="ro"><small>Scope rules</small><span class="chip" id="lu-rules">–</span><span>certified motors, passive, own landing per stage</span></div>
+      </div>
+      <ul class="lu-errs" id="lu-errs"></ul>
+      <ol class="stack" id="lu-stack" aria-label="Stages, bottom to top"></ol>
+      <p class="fine">Red-outlined modules are designed once and reused on more than one stage. Rotor and parachute sizes are worked out for a 6.5 m/s landing, a rule of thumb to confirm with the range safety officer (RSO). Masses and drag are assumptions until CAD and weighing replace them. Apogees are vertical-flight upper bounds; real flights land lower. Big reload prices still need vendor quotes.</p>
+    </div>
+  </section>
+
+  <p class="fine">Same equations as the Python sim (extended Barrowman margin, 1-D flight from a 1,300 m site, real ThrustCurve.org thrust curves from National Association of Rocketry (NAR) certification data), checked by an automated test to within 0.1% on apogee. Drag is calibrated to Estes' published Alpha III apogee for Taproot and assumed for the ring tail. Rotor descent uses an effective drag coefficient of 1.08 from the blade-element model at 6° pitch, until drone drops measure it. Drift assumes the wind holds all the way up. Prices were checked on Nov 1 to 2, 2026; "estimate" rows are not quotes. NAR model code: 1,500 g liftoff limit, launch winds of 20 mph or less, and certified motors only.</p>
+</main>
+
+<script>
+(function(){
+const G=9.80665, rho=h=>{const T=288.15-0.0065*h;return 1.225*Math.pow(T/288.15,4.2559)};
+// Real ThrustCurve.org curves (see sim/motors/motors.json). Linear interpolation; propellant
+// burns in proportion to impulse delivered, exactly as sim/phase0_compare.py does.
+function prepMotor(m){const c=m.curve,cum=[0];for(let i=1;i<c.length;i++)cum.push(cum[i-1]+(c[i][0]-c[i-1][0])*(c[i][1]+c[i-1][1])/2);m.cum=cum;m.I=cum[cum.length-1];m.tb=c[c.length-1][0];return m}
+function seg(c,t){let lo=0,hi=c.length-1;while(hi-lo>1){const mid=(lo+hi)>>1;if(c[mid][0]<=t)lo=mid;else hi=mid}return lo}
+function thrust(m,t){if(t<=0||t>=m.tb)return 0;const c=m.curve,i=seg(c,t),[t0,f0]=c[i],[t1,f1]=c[i+1];return f0+(f1-f0)*(t-t0)/(t1-t0)}
+function motorMass(m,t){if(t<=0)return m.mt;if(t>=m.tb)return m.mt-m.mp;const c=m.curve,i=seg(c,t),[t0,f0]=c[i];return m.mt-m.mp*(m.cum[i]+(t-t0)*(f0+thrust(m,t))/2)/m.I}
+const MOTORS={A8_3:prepMotor({name:"Estes A8-3",curve:[[0,0],[0.041,0.512],[0.084,2.115],[0.127,4.358],[0.166,6.794],[0.192,8.588],[0.206,9.294],[0.226,9.73],[0.236,8.845],[0.247,7.179],[0.261,5.063],[0.277,3.717],[0.306,3.205],[0.351,2.884],[0.405,2.499],[0.467,2.371],[0.532,2.307],[0.589,2.371],[0.632,2.371],[0.652,2.243],[0.668,1.794],[0.684,1.153],[0.703,0.448],[0.73,0]],mp:0.0033,mt:0.0163,price:12.99/3,max:0.085}),
+              B6_4:prepMotor({name:"Estes B6-4",curve:[[0,0],[0.036,1.364],[0.064,2.727],[0.082,4.215],[0.111,6.694],[0.135,9.05],[0.146,9.545],[0.172,11.901],[0.181,12.149],[0.191,11.901],[0.211,9.174],[0.239,7.314],[0.264,6.074],[0.275,5.95],[0.333,5.207],[0.394,4.835],[0.445,4.835],[0.556,4.339],[0.667,4.587],[0.723,4.339],[0.78,4.339],[0.793,4.091],[0.812,2.603],[0.833,1.24],[0.857,0]],mp:0.0056,mt:0.0191,price:13.99/3,max:0.113}),
+              C6_5:prepMotor({name:"Estes C6-5",curve:[[0,0],[0.031,0.946],[0.092,4.826],[0.139,9.936],[0.192,14.09],[0.209,11.446],[0.231,7.381],[0.248,6.151],[0.292,5.489],[0.37,4.921],[0.475,4.448],[0.671,4.258],[0.702,4.542],[0.723,4.164],[0.85,4.448],[1.063,4.353],[1.211,4.353],[1.242,4.069],[1.303,4.258],[1.468,4.353],[1.656,4.448],[1.821,4.448],[1.834,2.933],[1.847,1.325],[1.86,0]],mp:0.0108,mt:0.0241,price:13.99/3,max:0.113})};
+function finsCna(N,s,cr,ct,xs,d){const lf=Math.hypot(s,xs+ct/2-cr/2);const c=(4*N*(s/d)**2)/(1+Math.sqrt(1+(2*lf/(cr+ct))**2));const r=d/2;return c*(1+r/(s+r))}
+function finsXcp(xf,s,cr,ct,xs){return xf+xs*(cr+2*ct)/(3*(cr+ct))+(cr+ct-cr*ct/(cr+ct))/6}
+function fly(dry,mot,cd,d){const A=Math.PI*d*d/4;
+  let t=0,h=0,v=0,vmax=0;const dt=0.002;
+  const acc=(t,h,v)=>{const m=dry+motorMass(mot,t);const F=thrust(mot,t);let a=(F-0.5*rho(1300+h)*v*Math.abs(v)*cd*A)/m-G;if(h<=0&&a<0&&t<mot.tb)a=0;return a};
+  while(t<60){const k1=acc(t,h,v),k2=acc(t+dt/2,h+v*dt/2,v+k1*dt/2),k3=acc(t+dt/2,h+(v+k1*dt/2)*dt/2,v+k2*dt/2),k4=acc(t+dt,h+(v+k2*dt/2)*dt,v+k3*dt);
+    const nh=h+dt*(v+2*(v+k1*dt/2)+2*(v+k2*dt/2)+(v+k3*dt))/6; v+=dt*(k1+2*k2+2*k3+k4)/6; h=nh; t+=dt; vmax=Math.max(vmax,v); if(t>mot.tb&&v<=0)break}
+  return {apogee:h,tApo:t,vmax}}
+function evaluate(s){
+  const d=0.0248, mot=MOTORS[s.motor], L=s.len/1000; let r={};
+  if(s.kind==="taproot"){ // Estes Alpha III class at L = 307 mm
+    const dry=0.034+0.06*(L-0.307), cgDry=0.165*(L/0.307), sp=s.span/1000, mcg=L-0.037, xf=L-0.062;
+    const cnT=finsCna(3,sp,0.060,0.025,0.040,d), xT=finsXcp(xf,sp,0.060,0.025,0.040);
+    r.cp=(2*0.466*0.075+cnT*xT)/(2+cnT); r.m0=dry+mot.mt; r.cg=(dry*cgDry+mot.mt*mcg)/r.m0; r.dry=dry; r.cd=0.643+0.6*(sp-0.045);
+    const md=dry+mot.mt-mot.mp, S=Math.PI*(s.chute/1000)**2/4; r.vd=Math.sqrt(2*md*G/(rho(1300)*1.5*S)); r.rec="parachute, Cd 1.5";
+  } else { // Seedling ring tail, Phase 0 design at L = 550 mm
+    const Dm=s.ringD/1000,c=s.chord/1000,dry=0.068+0.04*(L-0.55)+0.2*(Dm-0.055)+0.1*(c-0.04)+0.03*(s.rotor/1000-0.30),cgDry=0.32*(L/0.55),mcg=L-0.05;
+    const h=(Dm-d)/2,N=Math.PI*Dm/h,xf=L-c-0.005,cnT=finsCna(N,h,c,c,0,d),xT=finsXcp(xf,h,c,c,0);
+    r.cp=(2*0.466*0.10+cnT*xT)/(2+cnT); r.m0=dry+mot.mt; r.cg=(dry*cgDry+mot.mt*mcg)/r.m0; r.dry=dry; r.cd=0.70+0.5*(Dm-0.055)+3*(c-0.04);
+    const md=dry+mot.mt-mot.mp, S=Math.PI*(s.rotor/1000)**2/4; r.vd=Math.sqrt(2*md*G/(rho(1300)*1.08*S)); r.rec="rotor, effective Cd 1.08";
+  }
+  r.margin=(r.cp-r.cg)/d; Object.assign(r,fly(r.dry,mot,r.cd,d)); r.mot=mot;
+  r.drift=(r.apogee/r.vd)*s.wind*0.44704; r.overweight=r.m0>mot.max; return r;
+}
+const BOM={taproot:[["Estes Alpha III launch set (rocket, pad, controller)",1,39.99,"verified"],["Recovery wadding, 75 sheets",1,5.99,"verified"],["Controller batteries",1,5,"estimate"]],
+           seedling:[["Body tube, nose cone, 18 mm motor mount",1,15,"estimate"],["PETG for ring tail and rotor hub",1,3,"estimate"],["Rotor blades (balsa or printed)",1,4,"estimate"],["Launch pad and controller",1,30,"estimate"]]};
+const st={kind:"taproot",motor:"B6_4",len:307,span:45,ringD:55,chord:40,chute:305,rotor:300,wind:10};
+const $=id=>document.getElementById(id);
+try{const saved=JSON.parse(localStorage.getItem("mw-cfg")||"null");if(saved)Object.assign(st,saved)}catch(e){}
+const cv=document.createElement("canvas"); $("stage").prepend(cv); const ctx=cv.getContext("2d");
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function draw(r){
+  const box=$("stage").getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);cv.width=box.width*dpr;cv.height=box.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const W=box.width,H=box.height,ink=css("--ink"),red=css("--red"),soft=css("--soft"),panel=css("--panel");ctx.clearRect(0,0,W,H);
+  const L=st.len/1000,sc=Math.min((H*0.8)/0.75,(W*0.9)/0.75),x0=W/2-L*sc/2,y=H*0.48,d=0.0248*sc*1.6;
+  ctx.lineWidth=1.5;ctx.strokeStyle=ink;ctx.fillStyle=panel;
+  const Ln=(st.kind==="taproot"?0.075:0.10)*sc;
+  ctx.beginPath();ctx.moveTo(x0,y);ctx.quadraticCurveTo(x0+Ln*0.2,y-d/2,x0+Ln,y-d/2);ctx.lineTo(x0+L*sc,y-d/2);ctx.lineTo(x0+L*sc,y+d/2);ctx.lineTo(x0+Ln,y+d/2);ctx.quadraticCurveTo(x0+Ln*0.2,y+d/2,x0,y);ctx.fill();ctx.stroke();
+  if(st.kind==="taproot"){const sp=st.span/1000*sc,cr=0.060*sc,ct=0.025*sc,xs=0.040*sc,xf=x0+(L-0.062)*sc;
+    for(const s of [-1,1]){ctx.beginPath();ctx.moveTo(xf,y+s*d/2);ctx.lineTo(xf+xs,y+s*(d/2+sp));ctx.lineTo(xf+xs+ct,y+s*(d/2+sp));ctx.lineTo(xf+cr,y+s*d/2);ctx.stroke()}
+    ctx.strokeStyle=red;ctx.beginPath();ctx.ellipse(x0+Ln*1.6,y,d*0.25,d*0.35,0,0,7);ctx.stroke();
+  } else {const Dm=st.ringD/1000*sc*1.6/1.6,c=st.chord/1000*sc,xf=x0+(L-st.chord/1000-0.005)*sc,R=(st.ringD/1000)*sc*0.8*1.6;
+    ctx.strokeRect(xf,y-R-d*0.1,c,d*0.2);ctx.strokeRect(xf,y+R-d*0.1,c,d*0.2);ctx.beginPath();ctx.moveTo(xf+c/2,y-d/2);ctx.lineTo(xf+c/2,y-R);ctx.moveTo(xf+c/2,y+d/2);ctx.lineTo(xf+c/2,y+R);ctx.stroke();
+    ctx.strokeStyle=red;ctx.lineWidth=2.5;const hx=x0+Ln*1.05,bl=(st.rotor/1000/2)*sc*0.9;ctx.beginPath();ctx.moveTo(hx,y-d/2-2);ctx.lineTo(hx+bl,y-d/2-2);ctx.moveTo(hx,y+d/2+2);ctx.lineTo(hx+bl,y+d/2+2);ctx.stroke();}
+  const xg=x0+r.cg*sc,xp=x0+r.cp*sc,my=y+H*0.18;
+  ctx.lineWidth=1;ctx.strokeStyle=soft;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(xg,y);ctx.lineTo(xg,my);ctx.moveTo(xp,y);ctx.lineTo(xp,my);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle=ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(xg,my,7,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(xg-7,my);ctx.lineTo(xg+7,my);ctx.moveTo(xg,my-7);ctx.lineTo(xg,my+7);ctx.stroke();
+  ctx.fillStyle=red;ctx.beginPath();ctx.arc(xp,my,5,0,7);ctx.fill();
+  ctx.font="500 12px Geist Mono, ui-monospace, monospace";ctx.fillStyle=ink;ctx.textAlign="center";
+  ctx.fillText("CG "+(r.cg*1000).toFixed(0)+" mm",xg,my+24);ctx.fillStyle=red;ctx.fillText("CP "+(r.cp*1000).toFixed(0)+" mm",xp,my+40);
+  ctx.strokeStyle=soft;ctx.beginPath();ctx.moveTo(Math.min(xg,xp),my+52);ctx.lineTo(Math.max(xg,xp),my+52);ctx.stroke();ctx.fillStyle=soft;ctx.fillText(r.margin.toFixed(2)+" calibers",(xg+xp)/2,my+68);
+}
+function render(){
+  for(const k of ["len","span","ringD","chord","chute","rotor","wind"])$(k).value=st[k];$("motor").value=st.motor;
+  document.querySelectorAll("[data-for]").forEach(e=>e.hidden=e.dataset.for!==st.kind);
+  $("b-taproot").setAttribute("aria-pressed",st.kind==="taproot");$("b-seedling").setAttribute("aria-pressed",st.kind==="seedling");
+  $("v-len").textContent=st.len+" mm";$("v-span").textContent=st.span+" mm";$("v-ringD").textContent=st.ringD+" mm";$("v-chord").textContent=st.chord+" mm";$("v-chute").textContent=st.chute+" mm";$("v-rotor").textContent=st.rotor+" mm";$("v-wind").textContent=st.wind+" mph";
+  const r=evaluate(st);
+  $("o-margin").textContent=r.margin.toFixed(2)+" cal";$("o-margin-note").textContent="CP "+((r.cp-r.cg)*1000).toFixed(0)+" mm behind CG";
+  const chip=$("o-chip");let cls="ok",txt="Stable";if(r.margin<1){cls="bad";txt="Unstable: do not fly"}else if(r.margin<1.5){cls="warn";txt="Marginal: add tail area"}else if(r.margin>4){cls="warn";txt="Over-stable: weathercocks"}chip.className="chip "+cls;chip.textContent=txt;
+  $("o-apogee").textContent=Math.round(r.apogee)+" m";$("o-speed").textContent="max "+Math.round(r.vmax)+" m/s · apogee at "+r.tApo.toFixed(1)+" s";
+  $("o-descent").textContent=r.vd.toFixed(1)+" m/s";$("o-rec").textContent=r.rec;
+  $("o-drift").textContent=Math.round(r.drift)+" m";$("o-field").textContent=r.drift>400?"needs a big field":r.drift>200?"club field":"school field";
+  const per=r.mot.price+(st.kind==="taproot"?0.28:0.28);$("o-cost").textContent="$"+per.toFixed(2);
+  const items=BOM[st.kind].concat([[r.mot.name+" motors, 3-pack",1,r.mot.price*3,"verified"]]);
+  const total=items.reduce((a,i)=>a+i[1]*i[2],0);$("o-build").textContent="first day $"+total.toFixed(0)+(r.overweight?" · over motor's lift limit":"");
+  $("bom").innerHTML=items.map(i=>`<tr><td>${i[0]}</td><td class="n">${i[1]}</td><td class="n">$${i[2].toFixed(2)}</td><td>${i[3]}</td></tr>`).join("")+`<tr><td><b>Total</b></td><td></td><td class="n"><b>$${total.toFixed(2)}</b></td><td></td></tr>`;
+  draw(r);try{localStorage.setItem("mw-cfg",JSON.stringify(st))}catch(e){}
+}
+for(const k of ["len","span","ringD","chord","chute","rotor","wind"])$(k).addEventListener("input",e=>{st[k]=+e.target.value;render()});
+$("motor").addEventListener("change",e=>{st.motor=e.target.value;render()});
+$("b-taproot").addEventListener("click",()=>{st.kind="taproot";st.len=307;render()});
+$("b-seedling").addEventListener("click",()=>{st.kind="seedling";st.len=550;render()});
+$("copy").addEventListener("click",()=>{const rows=[["item","qty","price_usd","status"]].concat([...document.querySelectorAll("#bom tr")].map(tr=>[...tr.children].map(td=>td.textContent.replace("$",""))));const csv=rows.map(r=>r.map(c=>/[,"]/.test(c)?`"${c.replace(/"/g,'""')}"`:c).join(",")).join("\n");
+  const done=()=>{$("copied").hidden=false;setTimeout(()=>$("copied").hidden=true,2500)};
+  navigator.clipboard.writeText(csv).then(done).catch(()=>{const ta=document.createElement("textarea");ta.value=csv;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e){}ta.remove();done()})});
+new ResizeObserver(()=>render()).observe($("stage"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+window.addEventListener("mw-theme",render);
+render();
+})();
+</script>
+<script>
+// GENERATED by sim/export_motors_js.py from sim/motors (ThrustCurve.org). Do not edit by hand.
+var MOTOR_DATA={"A8":{"name":"A8","curve":[[0.0,0.0],[0.041,0.512],[0.084,2.115],[0.127,4.358],[0.166,6.794],[0.192,8.588],[0.206,9.294],[0.226,9.73],[0.236,8.845],[0.247,7.179],[0.261,5.063],[0.277,3.717],[0.306,3.205],[0.351,2.884],[0.405,2.499],[0.467,2.371],[0.532,2.307],[0.589,2.371],[0.632,2.371],[0.652,2.243],[0.668,1.794],[0.684,1.153],[0.703,0.448],[0.73,0.0]],"mp":0.0033,"mt":0.0163,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000004e3/","delays_s":[3,5]},"B6":{"name":"B6","curve":[[0.0,0.0],[0.036,1.364],[0.064,2.727],[0.082,4.215],[0.111,6.694],[0.135,9.05],[0.146,9.545],[0.172,11.901],[0.181,12.149],[0.191,11.901],[0.211,9.174],[0.239,7.314],[0.264,6.074],[0.275,5.95],[0.333,5.207],[0.394,4.835],[0.445,4.835],[0.556,4.339],[0.667,4.587],[0.723,4.339],[0.78,4.339],[0.793,4.091],[0.812,2.603],[0.833,1.24],[0.857,0.0]],"mp":0.0056,"mt":0.0191,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e90000000414/","delays_s":[2,4,6]},"C6":{"name":"C6","curve":[[0.0,0.0],[0.031,0.946],[0.092,4.826],[0.139,9.936],[0.192,14.09],[0.209,11.446],[0.231,7.381],[0.248,6.151],[0.292,5.489],[0.37,4.921],[0.475,4.448],[0.671,4.258],[0.702,4.542],[0.723,4.164],[0.85,4.448],[1.063,4.353],[1.211,4.353],[1.242,4.069],[1.303,4.258],[1.468,4.353],[1.656,4.448],[1.821,4.448],[1.834,2.933],[1.847,1.325],[1.86,0.0]],"mp":0.0108,"mt":0.0241,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/69eb2379c7d63000021d8c29/","delays_s":[3,5,7]},"D12":{"name":"D12","curve":[[0.0,0.0],[0.049,2.569],[0.116,9.369],[0.184,17.275],[0.237,24.258],[0.282,29.73],[0.297,27.01],[0.311,22.589],[0.322,17.99],[0.348,14.126],[0.386,12.099],[0.442,10.808],[0.546,9.876],[0.718,9.306],[0.879,9.105],[1.066,8.901],[1.257,8.698],[1.436,8.31],[1.59,8.294],[1.612,4.613],[1.65,0.0]],"mp":0.0211,"mt":0.044,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000004ea/","delays_s":[3,5,7]},"H128W":{"name":"H128W","curve":[[0.0,0.0],[0.024,102.423],[0.074,175.203],[0.125,181.379],[0.176,179.281],[0.226,181.423],[0.277,186.074],[0.328,190.483],[0.378,189.509],[0.429,186.162],[0.48,184.114],[0.53,180.3],[0.581,174.144],[0.632,172.019],[0.683,169.36],[0.734,166.017],[0.784,161.882],[0.835,157.331],[0.886,153.073],[0.936,151.985],[0.988,139.902],[1.039,87.865],[1.089,40.857],[1.14,14.328],[1.191,4.33],[1.242,1.55],[1.293,0.0]],"mp":0.0942,"mt":0.206,"cert_org":"Tripoli Rocketry Association, Inc.","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e9000000000d/","delays_s":[]},"J350W":{"name":"J350W","curve":[[0.0,0.0],[0.041,841.443],[0.051,767.077],[0.088,698.219],[0.173,644.51],[0.256,621.098],[0.298,564.635],[0.547,543.977],[0.783,487.514],[0.989,418.656],[1.16,359.438],[1.192,340.158],[1.213,320.878],[1.287,216.214],[1.319,179.031],[1.342,126.699],[1.386,84.007],[1.427,53.709],[1.48,45.446],[1.591,20.657],[1.695,0.0]],"mp":0.37510000000000004,"mt":0.665,"cert_org":"Tripoli Rocketry Association, Inc.","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000002a9/","delays_s":[]},"E16":{"name":"E16","curve":[[0.0,0.0],[0.15,1.371],[0.186,1.92],[0.206,3.387],[0.242,5.587],[0.252,7.422],[0.277,8.705],[0.333,13.474],[0.359,15.858],[0.374,16.592],[0.394,18.609],[0.435,21.544],[0.476,24.661],[0.521,26.44],[0.643,21.72],[0.725,20.432],[0.821,19.511],[0.898,18.958],[1.025,18.219],[1.142,18.032],[1.259,17.844],[1.396,17.472],[1.569,17.282],[1.757,17.275],[1.895,17.086],[2.027,17.816],[2.042,12.494],[2.052,8.457],[2.063,4.97],[2.09,0.0]],"mp":0.04,"mt":0.084,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e6/","delays_s":[]},"F26":{"name":"F26","curve":[[0.0,0.0],[0.041,38.289],[0.114,36.318],[0.293,34.347],[0.497,32.939],[0.774,32.376],[1.0,31.25],[1.254,28.716],[1.498,25.338],[1.743,22.241],[2.003,17.737],[2.077,15.484],[2.304,5.349],[2.484,1.689],[2.61,0.0]],"mp":0.0431,"mt":0.1008,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5fc5ac0c995c080004e6edc8/","delays_s":[]},"G40W":{"name":"G40W","curve":[[0.0,0.0],[0.024,74.325],[0.057,67.005],[0.252,65.879],[0.5,63.063],[0.765,60.248],[1.0,54.054],[1.25,47.298],[1.502,36.599],[1.751,25.338],[1.999,12.951],[2.121,3.941],[2.3,0.0]],"mp":0.0538,"mt":0.123,"cert_org":"National Association of Rocketry","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e90000000463/","delays_s":[]},"O5500X":{"name":"O5500X","curve":[[0.0,0.0],[0.009,20.408],[0.044,7112.245],[0.063,6734.694],[0.078,6897.959],[0.094,6612.245],[0.109,6765.306],[0.125,6540.816],[0.147,6581.633],[0.194,6520.408],[0.35,6795.918],[0.428,7091.837],[0.563,7285.714],[0.694,7408.163],[0.988,7581.633],[1.266,7622.449],[1.491,7724.49],[1.581,7653.061],[1.641,7540.816],[1.684,7500.0],[1.716,7336.735],[1.784,7224.49],[1.938,6785.714],[2.138,6326.531],[2.491,5897.959],[2.6,5704.082],[2.919,3540.816],[3.022,3408.163],[3.138,2887.755],[3.3,2234.694],[3.388,1673.469],[3.441,1489.796],[3.544,1418.367],[3.609,1295.918],[3.688,816.327],[3.778,653.061],[3.819,581.633],[3.853,489.796],[3.897,285.714],[3.981,20.408],[3.997,0.0]],"mp":9.779,"mt":16.783,"cert_org":"Tripoli Rocketry Association, Inc.","type":"single-use","simfile":"https://www.thrustcurve.org/simfiles/63c1fca4c1da530004d92ed3/","delays_s":[]},"N5600":{"name":"N5600","curve":[[0.0,0.0],[0.019,6750.0],[0.041,6250.0],[0.044,6078.947],[0.077,5960.526],[0.198,6144.737],[0.749,6328.947],[0.931,6447.368],[1.049,6368.421],[1.25,6118.421],[1.501,5828.947],[1.751,5500.0],[1.999,5263.158],[2.131,5131.579],[2.17,5144.737],[2.2,4986.842],[2.252,4013.158],[2.291,3013.158],[2.335,2000.0],[2.373,1000.0],[2.401,500.0],[2.448,171.053],[2.483,0.0]],"mp":6.363,"mt":11.28,"cert_org":"Canadian Association of Rocketry","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e0/","delays_s":[]},"O8000":{"name":"O8000","curve":[[0.0,0.0],[0.045,3964.63],[0.046,6742.765],[0.047,8623.794],[0.125,7929.26],[0.239,8160.772],[0.364,8392.283],[0.489,8508.039],[0.614,8536.977],[0.773,8392.283],[0.989,8421.222],[1.273,8479.1],[1.602,8623.794],[2.011,8565.916],[2.33,8565.916],[2.682,8479.1],[3.102,8276.527],[3.568,8045.016],[3.886,7900.322],[4.239,7668.81],[4.591,7524.116],[4.739,7524.116],[4.909,7263.666],[4.955,7003.215],[4.977,6540.193],[4.989,5845.659],[5.0,5006.431],[5.023,4051.447],[5.034,3067.524],[5.045,1996.785],[5.08,1012.862],[5.114,318.328],[5.17,0.0]],"mp":18.61,"mt":32.672,"cert_org":"Canadian Association of Rocketry","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e90000000430/","delays_s":[]},"O3400":{"name":"O3400","curve":[[0.0,0.0],[0.04,3959.811],[0.052,4432.624],[0.101,4515.366],[0.19,4420.804],[0.38,4391.253],[0.965,4444.444],[2.176,4698.582],[2.887,4592.199],[3.658,4225.768],[4.17,2854.61],[4.493,2559.102],[4.881,1619.385],[5.483,868.794],[6.137,248.227],[6.322,0.0]],"mp":11.272,"mt":16.842,"cert_org":"Canadian Association of Rocketry","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000007c0/","delays_s":[]},"M2250":{"name":"M2250","curve":[[0.0,0.0],[0.016,2542.114],[0.051,2390.798],[0.139,2582.466],[0.259,2599.278],[0.877,2663.168],[1.388,2555.565],[1.823,2458.05],[1.86,2303.371],[1.891,1926.761],[1.997,1452.637],[2.195,1452.637],[2.244,1207.168],[2.276,645.616],[2.336,517.838],[2.414,144.591],[2.456,40.351],[2.497,0.0]],"mp":2.628,"mt":4.415,"cert_org":"Canadian Association of Rocketry","type":"reload","simfile":"https://www.thrustcurve.org/simfiles/5f4294d20002e900000006f4/","delays_s":[]}};
+if(typeof module!=='undefined')module.exports=MOTOR_DATA;
+
+</script>
+<script>
+// Maplewing physics core (MIT). Same equations as sim/phase0_compare.py.
+const G=9.80665;
+const rho=h=>{const T=288.15-0.0065*h;return 1.225*Math.pow(T/288.15,4.2559)};
+// Real ThrustCurve.org curves (see sim/motors/motors.json). Linear interpolation; propellant
+// burns in proportion to impulse delivered, exactly as sim/phase0_compare.py does.
+function prepMotor(m){const c=m.curve,cum=[0];for(let i=1;i<c.length;i++)cum.push(cum[i-1]+(c[i][0]-c[i-1][0])*(c[i][1]+c[i-1][1])/2);m.cum=cum;m.I=cum[cum.length-1];m.tb=c[c.length-1][0];return m}
+function seg(c,t){let lo=0,hi=c.length-1;while(hi-lo>1){const mid=(lo+hi)>>1;if(c[mid][0]<=t)lo=mid;else hi=mid}return lo}
+function thrust(m,t){if(t<=0||t>=m.tb)return 0;const c=m.curve,i=seg(c,t),[t0,f0]=c[i],[t1,f1]=c[i+1];return f0+(f1-f0)*(t-t0)/(t1-t0)}
+function motorMass(m,t){if(t<=0)return m.mt;if(t>=m.tb)return m.mt-m.mp;const c=m.curve,i=seg(c,t),[t0,f0]=c[i];return m.mt-m.mp*(m.cum[i]+(t-t0)*(f0+thrust(m,t))/2)/m.I}
+const C6_5=prepMotor({name:'Estes C6-5',curve:[[0,0],[0.031,0.946],[0.092,4.826],[0.139,9.936],[0.192,14.09],[0.209,11.446],[0.231,7.381],[0.248,6.151],[0.292,5.489],[0.37,4.921],[0.475,4.448],[0.671,4.258],[0.702,4.542],[0.723,4.164],[0.85,4.448],[1.063,4.353],[1.211,4.353],[1.242,4.069],[1.303,4.258],[1.468,4.353],[1.656,4.448],[1.821,4.448],[1.834,2.933],[1.847,1.325],[1.86,0]],mp:0.0108,mt:0.0241});
+function finsCna(N,s,cr,ct,xs,d){const lf=Math.hypot(s,xs+ct/2-cr/2);const c=(4*N*(s/d)**2)/(1+Math.sqrt(1+(2*lf/(cr+ct))**2));const r=d/2;return c*(1+r/(s+r))}
+function finsXcp(xf,s,cr,ct,xs){return xf+xs*(cr+2*ct)/(3*(cr+ct))+(cr+ct-cr*ct/(cr+ct))/6}
+function model(p){ // Seedling model rocket on an Estes C6-5 (ThrustCurve.org curve)
+  const d=0.0248, Ln=0.10, L=p.len, dry=0.068+0.04*(L-0.55)+0.2*(p.ringD-0.055)+0.1*(p.chord-0.04)+0.03*(p.rotor-0.30), cgDry=0.32*(L/0.55);
+  const mot=C6_5, mcg=L-0.05;
+  const Dm=p.ringD, h=(Dm-d)/2, N=Math.PI*Dm/h, c=p.chord, xf=L-c-0.005;
+  const cnN=2, xN=0.466*Ln, cnT=finsCna(N,h,c,c,0,d), xT=finsXcp(xf,h,c,c,0);
+  const cp=(cnN*xN+cnT*xT)/(cnN+cnT), m0=dry+mot.mt, cg=(dry*cgDry+mot.mt*mcg)/m0;
+  const margin=(cp-cg)/d;
+  const cd=0.70+0.5*(Dm-0.055)+3*(c-0.04); // ASSUMED: 0.70 at the Phase 0 design, growing with ring size
+  const A=Math.PI*d*d/4;
+  let t=0,hh=0,v=0,dt=0.002;
+  while(true){const m=dry+motorMass(mot,t);const F=thrust(mot,t);let a=(F-0.5*rho(1300+hh)*v*Math.abs(v)*cd*A)/m-G;if(hh<=0&&a<0&&t<mot.tb)a=0;v+=a*dt;hh+=v*dt;t+=dt;if(t>mot.tb&&v<=0)break;if(t>40)break}
+  const md=dry+mot.mt-mot.mp, S=Math.PI*p.rotor**2/4, vd=Math.sqrt(2*md*G/(rho(1300)*1.0*S));
+  return {margin,apogee:hh,vd,cp,cg,cd,mass:m0};
+}
+
+
+if (typeof module!=='undefined') module.exports={rho,finsCna,finsXcp,model,prepMotor,thrust,motorMass};
+
+</script>
+<script>
+// Maplewing shared framework, browser/Node mirror of sim/maplewing_framework.py (MIT licence).
+// Same types, same scope-rule checks, same classification, same multi-stage flight and landing
+// sizing. sim/test_framework_agree.py runs this under Node and compares it with Python.
+
+/** @typedef {{kind:string, mass:number, shared_id?:string, reusable?:boolean, metal?:boolean}} Module
+ *  kind: nose | avbay | rotor_bay | chute_bay | ring_tail | fins | interstage | motor_mount | body | bottle */
+/** @typedef {{primary:'rotor'|'parachute', backup:'parachute'|null,
+ *   deploy:'motor_ejection'|'commercial_altimeter'|'mechanical_timer',
+ *   redundant_altimeters?:boolean, drogue?:boolean, primary_d?:number, backup_d?:number}} Landing */
+/** @typedef {{name:string, d:number, cd:number, tail:'ring'|'fins', modules:Module[], landing:Landing,
+ *   motor:string|null, ignition:'ground'|'commercial_altimeter', inhibits:string[], delay_s:number|null}} Stage */
+/** @typedef {{name:string, tier:string, stages:Stage[], site_alt:number, staging_delay_s:number,
+ *   water:null|{psi:number, water_l:number, bottle:string, remote_release:boolean}}} Vehicle */
+
+(function (root) {
+  // In Node these come from require(); in the browser from motors-data.js (var MOTOR_DATA) and
+  // maplewing-core.js (function declarations), loaded as classic scripts before this one.
+  const NODE = typeof module !== 'undefined' && typeof require !== 'undefined';
+  const MOTOR_DATA = NODE ? require('./motors-data.js') : root.MOTOR_DATA;
+  const core = NODE ? require('./maplewing-core.js') : root;
+
+  const R = {
+    FAA_C1_MAX_PROP_KG: 0.125, FAA_C1_MAX_MASS_KG: 1.5, FAA_C2_MAX_IMPULSE: 40960,
+    FAA_AMATEUR_MAX_IMPULSE: 889600, NFPA: { prop_kg: 0.0625, impulse: 160, avg_thrust: 80 },
+    LANDING_TARGET_MS: 6.5, WATER_MAX_PSI: 60,
+    FORBIDDEN: new Set(['guidance', 'tvc', 'canard', 'servo', 'active_rotor', 'steerable_fin', 'pyro_diy']),
+    ROTOR_C_EFF: 1.08, CHUTE_CD: 1.5,
+  };
+  const G0 = 9.80665, RAIR = 287.053, GAM = 1.4, RE = 6.371e6;
+
+  const motors = {};
+  function motor(k) { if (!motors[k]) motors[k] = core.prepMotor(JSON.parse(JSON.stringify(MOTOR_DATA[k]))); return motors[k]; }
+  const impulse = k => motor(k).I;
+  function letter(I) { let hi = 2.5; for (const L of 'ABCDEFGHIJKLMNOP') { if (I <= hi + 1e-9) return L; hi *= 2; } return '?'; }
+  function isModelMotor(k) { const m = motor(k), I = m.I; return m.mp <= R.NFPA.prop_kg + 1e-6 && I <= R.NFPA.impulse && I / m.tb <= R.NFPA.avg_thrust; }
+  const dry = s => s.modules.reduce((a, m) => a + m.mass, 0);
+  const liftoffMass = v => v.stages.reduce((a, s) => a + dry(s) + (s.motor ? motor(s.motor).mt : 0), 0);
+
+  // 1976 US Standard Atmosphere, same table as sim/high_altitude.py
+  const LAYERS = [[0, 288.15, -6.5], [11, 216.65, 0], [20, 216.65, 1], [32, 228.65, 2.8], [47, 270.65, 0], [51, 270.65, -2.8], [71, 214.65, -2], [84.852, 186.87, 0]];
+  const PB = [101325];
+  for (let i = 0; i < LAYERS.length - 1; i++) {
+    const [h0, T0, L] = LAYERS[i], dh = (LAYERS[i + 1][0] - h0) * 1000;
+    PB.push(L === 0 ? PB[i] * Math.exp(-G0 * dh / (RAIR * T0)) : PB[i] * Math.pow((T0 + L / 1000 * dh) / T0, -G0 / (RAIR * L / 1000)));
+  }
+  function atmos(z) {
+    if (z > 86000) return [0, 275];
+    const h = RE * z / (RE + z) / 1000; let i = 0;
+    for (let k = 0; k < LAYERS.length; k++) if (LAYERS[k][0] <= h) i = k;
+    const [h0, T0, L] = LAYERS[i], T = T0 + L * (h - h0);
+    const P = PB[i] * (L === 0 ? Math.exp(-G0 * (h - h0) * 1000 / (RAIR * T0)) : Math.pow(T / T0, -G0 / (RAIR * L / 1000)));
+    return [P / (RAIR * T), Math.sqrt(GAM * RAIR * T)];
+  }
+  const MACH_CD = [[0, 1], [0.8, 1], [1.05, 1.65], [1.3, 1.55], [2, 1.15], [3, 0.95], [5, 0.8], [8, 0.75]];
+  function cdMult(M) { for (let i = 0; i < MACH_CD.length - 1; i++) { const [m0, c0] = MACH_CD[i], [m1, c1] = MACH_CD[i + 1]; if (M <= m1) return c0 + (c1 - c0) * (M - m0) / (m1 - m0); } return MACH_CD[MACH_CD.length - 1][1]; }
+
+  function classify(v) {
+    const keys = v.stages.filter(s => s.motor).map(s => s.motor);
+    if (!keys.length) return { faa_class: 'not an FAA amateur rocket (water/air)', cert_level: 'none', total_impulse_Ns: 0 };
+    const I = keys.reduce((a, k) => a + impulse(k), 0), prop = keys.reduce((a, k) => a + motor(k).mp, 0);
+    const metal = v.stages.some(s => s.modules.some(m => m.metal));
+    let faa;
+    if (prop <= R.FAA_C1_MAX_PROP_KG && liftoffMass(v) <= R.FAA_C1_MAX_MASS_KG && !metal) faa = 'Class 1 (model rocket)';
+    else if (I <= R.FAA_C2_MAX_IMPULSE) faa = 'Class 2 (high-power)';
+    else if (I <= R.FAA_AMATEUR_MAX_IMPULSE) faa = 'Class 3 (advanced high-power)';
+    else faa = 'not amateur: FAA launch licence';
+    const worst = keys.reduce((a, k) => impulse(k) > impulse(a) ? k : a), L = letter(impulse(worst));
+    let cert;
+    if (keys.every(isModelMotor) && liftoffMass(v) <= R.FAA_C1_MAX_MASS_KG) cert = L === 'G' ? 'none (G and up: adult purchase)' : 'none';
+    else cert = { H: 'Level 1', I: 'Level 1', J: 'Level 2', K: 'Level 2', L: 'Level 2', M: 'Level 3', N: 'Level 3', O: 'Level 3' }[L] || 'Level 1 (HPR by mass/thrust)';
+    return { faa_class: faa, cert_level: cert, total_impulse_Ns: Math.round(I) };
+  }
+
+  function validate(v) {
+    const bad = v.stages.filter(s => s.motor != null && (!MOTOR_DATA[s.motor] || !MOTOR_DATA[s.motor].cert_org))
+      .map(s => `${v.name} / ${s.name}: motor ${s.motor} is not a certified commercial motor in motors.json`);
+    if (bad.length) return bad;  // cannot classify or fly an uncertified motor
+    const errs = [], hpr = classify(v).cert_level.startsWith('Level');
+    v.stages.forEach((s, i) => {
+      const tag = `${v.name} / ${s.name}`;
+      for (const m of s.modules) if (R.FORBIDDEN.has(m.kind)) errs.push(`${tag}: module '${m.kind}' is active control or DIY pyro (out of scope)`);
+      if (!s.landing || !['rotor', 'parachute'].includes(s.landing.primary)) errs.push(`${tag}: every stage needs its own passive landing system`);
+      if (s.motor != null) { if (!MOTOR_DATA[s.motor] || !MOTOR_DATA[s.motor].cert_org) errs.push(`${tag}: motor ${s.motor} is not a certified commercial motor in motors.json`); }
+      else if (!v.water) errs.push(`${tag}: no motor and not a water rocket`);
+      if (i > 0) {
+        if (s.ignition !== 'commercial_altimeter') errs.push(`${tag}: upper stage must be lit by a commercial altimeter (not timer-only, motor ejection or DIY)`);
+        const inh = new Set(s.inhibits || []);
+        if (!['altitude', 'tilt', 'time'].some(x => inh.has(x)) || !inh.has('altitude')) errs.push(`${tag}: airstart needs an altitude inhibit plus tilt or time window`);
+      } else if (s.ignition !== 'ground') errs.push(`${tag}: first stage is lit on the ground by the range's launch controller`);
+      if (hpr) {
+        if (s.landing.deploy !== 'commercial_altimeter' || !s.landing.redundant_altimeters) errs.push(`${tag}: HPR stages deploy with redundant commercial altimeters`);
+        if (s.landing.primary === 'rotor' && s.landing.backup !== 'parachute') errs.push(`${tag}: rotor stages keep a backup parachute`);
+      }
+      if (s.landing && s.landing.deploy === 'motor_ejection' && s.motor != null) {
+        const sold = MOTOR_DATA[s.motor].delays_s || [];
+        if (!sold.includes(s.delay_s)) errs.push(`${tag}: motor ejection needs a delay the ${s.motor} is sold with (${sold.join(', ') || 'none listed'} s)`);
+      }
+    });
+    if (v.water) {
+      const w = v.water;
+      if (w.psi > R.WATER_MAX_PSI) errs.push(`${v.name}: ${w.psi} psi > ${R.WATER_MAX_PSI} psi limit`);
+      if (w.bottle !== 'PET') errs.push(`${v.name}: rated PET bottles only`);
+      if (!w.remote_release) errs.push(`${v.name}: remote release required`);
+    }
+    return errs;
+  }
+
+  function rhoISA(h) { const T = 288.15 - 0.0065 * h; return 1.225 * Math.pow(T / 288.15, 4.2559); }
+
+  // Water rocket, a line-by-line port of phase0_compare.water_rocket (Euler, dt 1e-4).
+  function water(psi, Vw, dryM, dBody, cd, gamma = 1.4, dt = 1e-4) {
+    const Pa = 101325, P0 = Pa + psi * 6894.76, Vb = 0.002, dn = 0.0217, An = Math.PI * dn * dn / 4, A = Math.PI * dBody * dBody / 4, Va0 = Vb - Vw;
+    let mw = Vw * 1000; let mAir = P0 / (287 * 293) * Va0; let t = 0, h = 0, v = 0, vmax = 0;
+    while (mw > 0) {
+      const Va = Vb - mw / 1000, P = P0 * Math.pow(Va0 / Va, gamma); if (P <= Pa) break;
+      const ve = Math.sqrt(2 * (P - Pa) / 1000), mdot = 1000 * An * ve, F = mdot * ve, m = dryM + mw + mAir;
+      const a = (F - 0.5 * rhoISA(h) * v * Math.abs(v) * cd * A) / m - G0;
+      v += a * dt; h += v * dt; t += dt; mw -= mdot * dt; vmax = Math.max(vmax, v);
+    }
+    let P = P0 * Math.pow(Va0 / Vb, gamma), T = 293 * Math.pow(P / P0, (gamma - 1) / gamma);
+    while (P > Pa * 1.01) {
+      const rhoA = mAir / Vb; let mdot, F;
+      if (P / Pa > 1.893) {
+        mdot = An * P * Math.sqrt(gamma / (287 * T)) * Math.pow(2 / (gamma + 1), (gamma + 1) / (2 * (gamma - 1)));
+        const Te = T * 2 / (gamma + 1), ve = Math.sqrt(gamma * 287 * Te), Pe = P * Math.pow(2 / (gamma + 1), gamma / (gamma - 1));
+        F = mdot * ve + (Pe - Pa) * An;
+      } else { const ve = Math.sqrt(2 * (P - Pa) / rhoA); mdot = rhoA * An * ve; F = mdot * ve; }
+      const m = dryM + mAir, a = (F - 0.5 * rhoISA(h) * v * Math.abs(v) * cd * A) / m - G0;
+      v += a * dt; h += v * dt; t += dt; mAir -= mdot * dt;
+      P = P * Math.pow(mAir / (mAir + mdot * dt), gamma); T = T * Math.pow(mAir / (mAir + mdot * dt), gamma - 1); vmax = Math.max(vmax, v);
+    }
+    while (v > 0) { const a = -G0 - 0.5 * rhoISA(h) * v * Math.abs(v) * cd * A / dryM; v += a * dt; h += v * dt; t += dt; }
+    return { apogee_m: Math.round(h * 10) / 10, vmax_ms: Math.round(vmax * 10) / 10, mach_max: Math.round(vmax / 340 * 100) / 100, t_apogee_s: Math.round(t * 10) / 10 };
+  }
+
+  // Vertical multi-stage flight, identical integrator to maplewing_framework.fly.
+  function fly(v, dt = 0.005) {
+    if (v.water) { const s = v.stages[0]; return water(v.water.psi, v.water.water_l / 1000, dry(s), s.d, s.cd); }
+    const st = v.stages.map(s => ({ m: motor(s.motor), dry: dry(s), d: s.d, cd: s.cd }));
+    let t = 0, h = 0, vel = 0, k = 0, tIgn = 0, vmax = 0, Mmax = 0;
+    const s0 = v.stages[0];
+    const ejT = (st.length === 1 && s0.landing && s0.landing.deploy === 'motor_ejection' && s0.delay_s != null) ? st[0].m.tb + s0.delay_s : null;
+    let ej = null, apo = null;
+    while (true) {
+      const live = st.slice(k), m0 = live[0].m, tm = t - tIgn;
+      const m = live.reduce((a, s) => a + s.dry, 0) + core.motorMass(m0, tm) + live.slice(1).reduce((a, s) => a + s.m.mt, 0);
+      const F = core.thrust(m0, tm), [rho, a] = atmos(v.site_alt + h), M = Math.abs(vel) / a;
+      const d = Math.max(...live.map(s => s.d)), q = 0.5 * rho * vel * vel;
+      const D = q * live[0].cd * cdMult(M) * Math.PI * d * d / 4 * (vel >= 0 ? 1 : -1);
+      const g = G0 * (RE / (RE + v.site_alt + h)) ** 2;
+      let acc = (F - D) / m - g; if (h <= 0 && acc < 0) acc = 0;
+      vel += acc * dt; h += vel * dt; t += dt;
+      vmax = Math.max(vmax, vel); Mmax = Math.max(Mmax, M);
+      if (live.length > 1 && tm > m0.tb + v.staging_delay_s) { k++; tIgn = t; }
+      if (ejT != null && ej == null && tm >= ejT) ej = { t_s: Math.round(t * 10) / 10, alt_m: Math.round(h), v_ms: Math.round(vel * 10) / 10 };
+      if (apo == null && st.length - k === 1 && tm > m0.tb && vel < 0) apo = [h, t];
+      if (apo != null && (ejT == null || ej != null)) break;
+    }
+    [h, t] = apo;
+    const out = { apogee_m: Math.round(h), vmax_ms: Math.round(vmax), mach_max: Math.round(Mmax * 100) / 100, t_apogee_s: Math.round(t * 10) / 10 };
+    if (ej) out.ejection = ej;
+    return out;
+  }
+
+  // Fly a motor-ejection rocket with every delay its motor is sold with (mirror of ejection_options).
+  function ejectionOptions(v) {
+    const s = v.stages[0];
+    return (MOTOR_DATA[s.motor].delays_s || []).map(d => ({ delay_s: d, ...fly({ ...v, stages: [{ ...s, delay_s: d }] }).ejection }));
+  }
+
+  function sizeLanding(s, siteAlt) {
+    const m = dry(s) + (s.motor ? motor(s.motor).mt - motor(s.motor).mp : 0), rho = rhoISA(siteAlt), L = s.landing;
+    const Dfor = c => Math.sqrt(4 * 2 * m * G0 / (rho * c * R.LANDING_TARGET_MS ** 2) / Math.PI);
+    const c = L.primary === 'rotor' ? R.ROTOR_C_EFF : R.CHUTE_CD, Dp = L.primary_d || Dfor(c);
+    const vp = Math.sqrt(2 * m * G0 / (rho * c * Math.PI * Dp * Dp / 4));
+    const out = { stage: s.name, primary_D_m: Math.round(Dp * 100) / 100, v_land_ms: Math.round(vp * 100) / 100, landing_J: Math.round(5 * m * vp * vp) / 10 };
+    if (L.backup) out.backup_D_m = Math.round((L.backup_d || Dfor(R.CHUTE_CD)) * 100) / 100;
+    return out;
+  }
+
+  // 2-D flight off a tilted rod in a steady wind (mirror of fly_tilted). Single-stage motor rockets only.
+  function flyTilted(v, angleDeg = 0, windMs = 0, railM = 0.91, dt = 0.005) {
+    const s = v.stages[0], mo = motor(s.motor), d = dry(s);
+    const th = angleDeg * Math.PI / 180, ux = Math.sin(th), uy = Math.cos(th), A = Math.PI * s.d * s.d / 4;
+    const ejT = (s.landing && s.landing.deploy === 'motor_ejection' && s.delay_s != null) ? mo.tb + s.delay_s : null;
+    let t = 0, x = 0, h = 0, vx = 0, vy = 0, onRail = true, apo = null, ej = null, offRail = null;
+    while (true) {
+      const m = d + core.motorMass(mo, t), F = core.thrust(mo, t), [rho, a] = atmos(v.site_alt + h);
+      const rx = vx - windMs, ry = vy, sp = Math.hypot(rx, ry);
+      const [dx, dy] = (onRail || sp === 0) ? [ux, uy] : [rx / sp, ry / sp];
+      const Dm = 0.5 * rho * sp * sp * s.cd * cdMult(sp / a) * A;
+      let fx = F * dx, fy = F * dy;
+      if (sp > 0) { fx -= Dm * rx / sp; fy -= Dm * ry / sp; }
+      const g = G0 * (RE / (RE + v.site_alt + h)) ** 2;
+      let ax = fx / m, ay = fy / m - g;
+      if (onRail) { let al = ax * ux + ay * uy; if (x * ux + h * uy <= 0) al = Math.max(al, 0); ax = al * ux; ay = al * uy; }
+      vx += ax * dt; vy += ay * dt; x += vx * dt; h += vy * dt; t += dt;
+      if (onRail && x * ux + h * uy >= railM) { onRail = false; offRail = Math.round(Math.hypot(vx, vy) * 10) / 10; }
+      if (ejT != null && ej == null && t >= ejT) ej = { t_s: Math.round(t * 10) / 10, alt_m: Math.round(h), v_ms: Math.round(vy * 10) / 10, speed_ms: Math.round(Math.hypot(vx, vy) * 10) / 10 };
+      if (apo == null && t > mo.tb && vy < 0) apo = { apogee_m: Math.round(h), t_apogee_s: Math.round(t * 10) / 10, x_at_apogee_m: Math.round(x) };
+      if (apo != null && (ejT == null || ej != null)) break;
+    }
+    const out = { ...apo, angle_deg: angleDeg, wind_ms: windMs, off_rod_ms: offRail };
+    if (ej) out.ejection = ej;
+    return out;
+  }
+
+  const LAUNCH_CASES = [[0, 0], [5, 0], [10, 0], [0, 3], [0, 5], [5, 5]];
+  function ejectionTable(v, cases = LAUNCH_CASES) {
+    const s = v.stages[0], rows = [];
+    for (const dl of MOTOR_DATA[s.motor].delays_s || []) for (const [ang, w] of cases) {
+      const f = flyTilted({ ...v, stages: [{ ...s, delay_s: dl }] }, ang, w), e = f.ejection;
+      rows.push({ delay_s: dl, angle_deg: ang, wind_ms: w, t_apogee_s: f.t_apogee_s, apogee_m: f.apogee_m,
+                  eject_vs_top_s: Math.round((e.t_s - f.t_apogee_s) * 10) / 10, speed_ms: e.speed_ms, v_ms: e.v_ms });
+    }
+    return rows;
+  }
+
+  const api = { R, motor, letter, classify, validate, fly, ejectionOptions, flyTilted, ejectionTable, atmos, cdMult, sizeLanding, dry, liftoffMass };
+  if (typeof module !== 'undefined') module.exports = api; else root.Maplewing = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+var LINEUP={"fins":[{"name":"Taproot","tier":"Class 1 normal","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Taproot","d":0.0248,"cd":0.643,"tail":"fins","modules":[{"kind":"nose","mass":0.006,"shared_id":"NC-BT50","reusable":true,"metal":false},{"kind":"body","mass":0.02,"shared_id":"BT-50","reusable":true,"metal":false},{"kind":"fins","mass":0.005,"shared_id":"FIN-3","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.003,"shared_id":"CB-BT50","reusable":true,"metal":false}],"landing":{"primary":"parachute","backup":null,"deploy":"motor_ejection","redundant_altimeters":false,"drogue":false,"primary_d":0.305,"backup_d":0.0},"motor":"C6","ignition":"ground","inhibits":[],"delay_s":5}]},{"name":"Seedling","tier":"Class 1 rotor pathfinder","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Seedling","d":0.0248,"cd":0.7,"tail":"ring","modules":[{"kind":"nose","mass":0.006,"shared_id":"NC-BT50","reusable":true,"metal":false},{"kind":"body","mass":0.03,"shared_id":"BT-50-S","reusable":true,"metal":false},{"kind":"motor_mount","mass":0.008,"shared_id":"MM-18","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.013,"shared_id":"RB-BT50","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.0111,"shared_id":"TAIL-BT50-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":null,"deploy":"motor_ejection","redundant_altimeters":false,"drogue":false,"primary_d":0.3,"backup_d":0.0},"motor":"C6","ignition":"ground","inhibits":[],"delay_s":5}]},{"name":"Dewdrop","tier":"Water","site_alt":1300.0,"staging_delay_s":2.0,"water":{"psi":60,"water_l":0.6,"bottle":"PET","remote_release":true,"proof_psi":90},"stages":[{"name":"Dewdrop","d":0.105,"cd":0.55,"tail":"ring","modules":[{"kind":"bottle","mass":0.05,"shared_id":"PET-2L","reusable":true,"metal":false},{"kind":"nose","mass":0.0367,"shared_id":"NC-W","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.0245,"shared_id":"RB-W","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.0485,"shared_id":"TAIL-W-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":null,"deploy":"mechanical_timer","redundant_altimeters":false,"drogue":false,"primary_d":0.44,"backup_d":0.0},"motor":null,"ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-1","tier":"Single stage","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Maplewing-1 L1 (H128W)","d":0.0574,"cd":0.65,"tail":"ring","modules":[{"kind":"nose","mass":0.15,"shared_id":"NC-54","reusable":true,"metal":false},{"kind":"avbay","mass":0.35,"shared_id":"AV-54","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.3,"shared_id":"RB-54","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.12,"shared_id":"CB-54","reusable":true,"metal":false},{"kind":"body","mass":0.25,"shared_id":"BT-54","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.25,"shared_id":"TAIL-54-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"H128W","ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-1 L2 config","tier":"Single stage","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Maplewing-1 L2 (J350W)","d":0.1016,"cd":0.62,"tail":"ring","modules":[{"kind":"nose","mass":0.45,"shared_id":"NC-102","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-102","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-102","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.35,"shared_id":"CB-102","reusable":true,"metal":false},{"kind":"body","mass":0.8,"shared_id":"BT-102","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.6,"shared_id":"TAIL-102-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"J350W","ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-2","tier":"Class 2 two stage","site_alt":1190,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Core-98 booster (O3400)","d":0.102,"cd":0.45,"tail":"fins","modules":[{"kind":"motor_mount","mass":0.6,"shared_id":"MM-98","reusable":true,"metal":false},{"kind":"body","mass":0.9,"shared_id":"BT-98-B","reusable":true,"metal":false},{"kind":"interstage","mass":0.4,"shared_id":"IS-98","reusable":true,"metal":false},{"kind":"fins","mass":0.7,"shared_id":"TAIL-98-fins","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-98","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-98","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"O3400","ignition":"ground","inhibits":[],"delay_s":null},{"name":"Core-98 sustainer (N5600)","d":0.102,"cd":0.4,"tail":"fins","modules":[{"kind":"nose","mass":0.6,"shared_id":"NC-98","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-98","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-98","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.4,"shared_id":"CB-98","reusable":true,"metal":false},{"kind":"body","mass":1.4,"shared_id":"BT-98-S","reusable":true,"metal":false},{"kind":"fins","mass":0.7,"shared_id":"TAIL-98-fins","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":true,"primary_d":0.0,"backup_d":0.0},"motor":"N5600","ignition":"commercial_altimeter","inhibits":["altitude","tilt","time"],"delay_s":null}]}],"ring":[{"name":"Taproot","tier":"Class 1 normal","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Taproot","d":0.0248,"cd":0.643,"tail":"fins","modules":[{"kind":"nose","mass":0.006,"shared_id":"NC-BT50","reusable":true,"metal":false},{"kind":"body","mass":0.02,"shared_id":"BT-50","reusable":true,"metal":false},{"kind":"fins","mass":0.005,"shared_id":"FIN-3","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.003,"shared_id":"CB-BT50","reusable":true,"metal":false}],"landing":{"primary":"parachute","backup":null,"deploy":"motor_ejection","redundant_altimeters":false,"drogue":false,"primary_d":0.305,"backup_d":0.0},"motor":"C6","ignition":"ground","inhibits":[],"delay_s":5}]},{"name":"Seedling","tier":"Class 1 rotor pathfinder","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Seedling","d":0.0248,"cd":0.7,"tail":"ring","modules":[{"kind":"nose","mass":0.006,"shared_id":"NC-BT50","reusable":true,"metal":false},{"kind":"body","mass":0.03,"shared_id":"BT-50-S","reusable":true,"metal":false},{"kind":"motor_mount","mass":0.008,"shared_id":"MM-18","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.013,"shared_id":"RB-BT50","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.0111,"shared_id":"TAIL-BT50-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":null,"deploy":"motor_ejection","redundant_altimeters":false,"drogue":false,"primary_d":0.3,"backup_d":0.0},"motor":"C6","ignition":"ground","inhibits":[],"delay_s":5}]},{"name":"Dewdrop","tier":"Water","site_alt":1300.0,"staging_delay_s":2.0,"water":{"psi":60,"water_l":0.6,"bottle":"PET","remote_release":true,"proof_psi":90},"stages":[{"name":"Dewdrop","d":0.105,"cd":0.55,"tail":"ring","modules":[{"kind":"bottle","mass":0.05,"shared_id":"PET-2L","reusable":true,"metal":false},{"kind":"nose","mass":0.0367,"shared_id":"NC-W","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.0245,"shared_id":"RB-W","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.0485,"shared_id":"TAIL-W-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":null,"deploy":"mechanical_timer","redundant_altimeters":false,"drogue":false,"primary_d":0.44,"backup_d":0.0},"motor":null,"ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-1","tier":"Single stage","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Maplewing-1 L1 (H128W)","d":0.0574,"cd":0.65,"tail":"ring","modules":[{"kind":"nose","mass":0.15,"shared_id":"NC-54","reusable":true,"metal":false},{"kind":"avbay","mass":0.35,"shared_id":"AV-54","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.3,"shared_id":"RB-54","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.12,"shared_id":"CB-54","reusable":true,"metal":false},{"kind":"body","mass":0.25,"shared_id":"BT-54","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.25,"shared_id":"TAIL-54-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"H128W","ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-1 L2 config","tier":"Single stage","site_alt":1300.0,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Maplewing-1 L2 (J350W)","d":0.1016,"cd":0.62,"tail":"ring","modules":[{"kind":"nose","mass":0.45,"shared_id":"NC-102","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-102","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-102","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.35,"shared_id":"CB-102","reusable":true,"metal":false},{"kind":"body","mass":0.8,"shared_id":"BT-102","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.6,"shared_id":"TAIL-102-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"J350W","ignition":"ground","inhibits":[],"delay_s":null}]},{"name":"Maplewing-2","tier":"Class 2 two stage","site_alt":1190,"staging_delay_s":2.0,"water":null,"stages":[{"name":"Core-98 booster (O3400)","d":0.102,"cd":0.6075,"tail":"ring","modules":[{"kind":"motor_mount","mass":0.6,"shared_id":"MM-98","reusable":true,"metal":false},{"kind":"body","mass":0.9,"shared_id":"BT-98-B","reusable":true,"metal":false},{"kind":"interstage","mass":0.4,"shared_id":"IS-98","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.7,"shared_id":"TAIL-98-ring","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-98","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-98","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":false,"primary_d":0.0,"backup_d":0.0},"motor":"O3400","ignition":"ground","inhibits":[],"delay_s":null},{"name":"Core-98 sustainer (N5600)","d":0.102,"cd":0.54,"tail":"ring","modules":[{"kind":"nose","mass":0.6,"shared_id":"NC-98","reusable":true,"metal":false},{"kind":"avbay","mass":0.8,"shared_id":"AV-98","reusable":true,"metal":false},{"kind":"rotor_bay","mass":0.6,"shared_id":"RB-98","reusable":true,"metal":false},{"kind":"chute_bay","mass":0.4,"shared_id":"CB-98","reusable":true,"metal":false},{"kind":"body","mass":1.4,"shared_id":"BT-98-S","reusable":true,"metal":false},{"kind":"ring_tail","mass":0.7,"shared_id":"TAIL-98-ring","reusable":true,"metal":false}],"landing":{"primary":"rotor","backup":"parachute","deploy":"commercial_altimeter","redundant_altimeters":true,"drogue":true,"primary_d":0.0,"backup_d":0.0},"motor":"N5600","ignition":"commercial_altimeter","inhibits":["altitude","tilt","time"],"delay_s":null}]}]};
+</script>
+<script>
+// Lineup view for the configurator (MIT licence). Reads LINEUP (built from sim/lineup.py by
+// sim/build_configurator.py) and computes everything live with maplewing-framework.js.
+(function () {
+  const F = window.Maplewing, $ = id => document.getElementById(id);
+  const ORDER = ["Taproot", "Seedling", "Dewdrop", "Maplewing-1", "Maplewing-1 L2 config", "Maplewing-2", "Maplewing-3"];
+  const LABEL = { "Maplewing-1 L2 config": "Maplewing-1 L2" };
+  const BLURB = {
+    "Taproot": "The affordable control rocket: an Estes Alpha III class, three fins, parachute on motor ejection.",
+    "Seedling": "The rotor pathfinder from Phase 0, not one of the five: a BT-50 model with a printed ring tail and a 0.30 m rotor pushed out by the motor's own ejection charge.",
+    "Dewdrop": "The water rocket: 2 L PET bottle, printed ring tail, spring-folded rotor released by a mechanical timer.",
+    "Maplewing-1": "Single stage, ring tail, rotor with a backup parachute. Level 1 on an H128W reload.",
+    "Maplewing-1 L2 config": "The same design scaled to 102 mm for a Level 2 flight on a J350W reload.",
+    "Maplewing-2": "Two stages under the FAA Class 2 impulse limit. Both stages are Core-98 modules and each lands on its own.",
+  };
+  const st = { pick: "Maplewing-2", tail: "fins" };
+  try { Object.assign(st, JSON.parse(localStorage.getItem("mw-lineup") || "{}")); } catch (e) {}
+  if (!ORDER.includes(st.pick)) st.pick = "Maplewing-2";
+
+  // shared_id used by more than one stage = a module designed once and reused
+  const usage = {};
+  for (const v of LINEUP.fins) for (const s of v.stages) for (const m of s.modules) if (m.shared_id) (usage[m.shared_id] ||= new Set()).add(v.name + "/" + s.name);
+
+  const picker = $("lu-pick");
+  picker.innerHTML = ORDER.map(n => `<button type="button" data-n="${n}" aria-pressed="false">${LABEL[n] || n}</button>`).join("");
+  picker.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { st.pick = b.dataset.n; render(); } });
+  $("lu-tail").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { st.tail = b.dataset.t; render(); } });
+
+  const fmtAlt = m => m >= 10000 ? (m / 1000).toFixed(1) + " km" : Math.round(m) + " m";
+  const motorLine = k => { const m = F.motor(k), d = MOTOR_DATA[k]; return `${k} · ${Math.round(m.I).toLocaleString()} N·s · ${d.type}`; };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function render() {
+    picker.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.n === st.pick));
+    $("lu-tail").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.t === st.tail));
+    const held = st.pick === "Maplewing-3";
+    $("lu-held").hidden = !held; $("lu-body").hidden = held;
+    $("lu-tailwrap").hidden = held || st.pick !== "Maplewing-2";
+    try { localStorage.setItem("mw-lineup", JSON.stringify(st)); } catch (e) {}
+    if (held) return;
+    const v = LINEUP[st.tail].find(x => x.name === st.pick);
+    const c = F.classify(v), f = F.fly(v), errs = F.validate(v);
+    $("lu-blurb").textContent = BLURB[v.name];
+    $("lu-class").textContent = c.faa_class.replace(/ \(.*/, "");
+    $("lu-class-n").textContent = c.faa_class.includes("(") ? c.faa_class.replace(/.*\(|\)/g, "") : "";
+    $("lu-cert").textContent = c.cert_level.replace(/ \(.*/, "");
+    $("lu-cert-n").textContent = c.total_impulse_Ns ? `${c.total_impulse_Ns.toLocaleString()} N·s total` : "water and air";
+    $("lu-apo").textContent = fmtAlt(f.apogee_m);
+    $("lu-apo-n").textContent = `top at ${f.t_apogee_s} s · site ${v.site_alt.toLocaleString()} m · vertical upper bound`;
+    $("lu-mach").textContent = "Mach " + f.mach_max.toFixed(2);
+    $("lu-mach-n").textContent = f.mach_max > 1 ? "supersonic: fins on fast stages by default" : "subsonic";
+    const chip = $("lu-rules");
+    chip.className = "chip " + (errs.length ? "bad" : "ok");
+    chip.textContent = errs.length ? `${errs.length} rule problem${errs.length > 1 ? "s" : ""}` : "Passes all scope rules";
+    $("lu-errs").innerHTML = errs.map(e => `<li>${esc(e)}</li>`).join("");
+    $("lu-stack").innerHTML = v.stages.map((s, i) => {
+      const L = F.sizeLanding(s, v.site_alt), ld = s.landing;
+      const ign = i === 0 ? (v.water ? "remote pull-cord release" : "range launch controller")
+        : `commercial altimeter airstart, inhibits: ${s.inhibits.join(", ")}`;
+      const deploy = { motor_ejection: "motor ejection", commercial_altimeter: "redundant commercial altimeters", mechanical_timer: "mechanical timer" }[ld.deploy];
+      const mods = s.modules.map(m => {
+        const shared = m.shared_id && usage[m.shared_id] && usage[m.shared_id].size > 1;
+        return `<li class="mod${shared ? " shared" : ""}" title="${esc(m.shared_id)}">${esc(m.kind.replace("_", " "))} <span>${m.mass < 1 ? Math.round(m.mass * 1000) + " g" : m.mass.toFixed(1) + " kg"}</span></li>`;
+      }).join("");
+      return `<li class="stg">
+        <div class="stg-h"><small>${v.stages.length > 1 ? "Stage " + (i + 1) : "Single stage"} · ${s.tail === "ring" ? "ring tail" : "fins"} · ⌀${Math.round(s.d * 1000)} mm</small><b>${esc(s.name)}</b>
+        <span>${s.motor ? motorLine(s.motor) : `${v.water.psi} psi, ${Math.round(v.water.water_l * 1000)} mL water, proof ${v.water.proof_psi} psi`}</span></div>
+        <dl>
+          <dt>Lit by</dt><dd>${ign}</dd>
+          <dt>Lands on</dt><dd>${ld.primary} ${L.primary_D_m} m at ${L.v_land_ms} m/s${ld.drogue ? ", drogue at apogee" : ""}${ld.backup ? `, backup chute ${L.backup_D_m} m` : ""}</dd>
+          <dt>Deployed by</dt><dd>${deploy}</dd>
+          <dt>Landing energy</dt><dd>${L.landing_J} J</dd>${i === 0 && f.ejection ? `
+          <dt>Ejection</dt><dd>${s.delay_s} s delay: ${ejText(f.ejection, f.t_apogee_s)}</dd>
+          <dt>Other delays</dt><dd>${F.ejectionOptions(v).filter(o => o.delay_s !== s.delay_s).map(o => `${o.delay_s} s: ${ejText(o, f.t_apogee_s)}`).join("; ")}</dd>
+          <dt>Tilt and wind</dt><dd>${worstText(v)}</dd>
+          <dt>Off the rod</dt><dd>${[0.91, 1.22].map(r => `${F.flyTilted(v, 0, 0, r).off_rod_ms} m/s off a ${r} m rod`).join(", ")} (about 15 m/s is a common minimum; check with your club)</dd>` : ""}
+        </dl>
+        <ul class="mods" aria-label="Modules">${mods}</ul>
+      </li>`;
+    }).join("");
+  }
+  function worstText(v) {
+    const rows = F.ejectionTable(v), by = {};
+    for (const r of rows) by[r.delay_s] = Math.max(by[r.delay_s] || 0, r.speed_ms);
+    return "fastest the rocket is moving when recovery deploys, over rod tilts 0–10° and winds 0–5 m/s: " +
+      Object.entries(by).map(([d, sp]) => `${d} s delay ${sp} m/s`).join(", ");
+  }
+  function ejText(e, tApo) {
+    const dt = Math.round((e.t_s - tApo) * 10) / 10;
+    return `${Math.abs(dt)} s ${dt < 0 ? "before" : "after"} the top, ${e.v_ms >= 0 ? "still climbing" : "already falling"} at ${Math.abs(e.v_ms)} m/s`;
+  }
+  render();
+})();
+
+</script>
+<script>
+// Theme toggle shared with the website (remembered on this device only).
+(function(){const r=document.documentElement,b=document.getElementById("theme");
+const dark=()=>r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme: dark)").matches);
+const lab=()=>{b.textContent=dark()?"Light theme":"Dark theme";b.setAttribute("aria-label",dark()?"Switch to light theme":"Switch to dark theme")};lab();
+b.addEventListener("click",()=>{r.dataset.theme=dark()?"light":"dark";lab();try{localStorage.setItem("mw-theme",r.dataset.theme)}catch{}window.dispatchEvent(new Event("mw-theme"))});})();
+</script>
+</body>
+</html>

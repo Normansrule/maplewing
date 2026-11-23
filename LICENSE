@@ -1,0 +1,12 @@
+Maplewing is licensed in parts (matching rocket-odyssey):
+
+  Code: simulator, website, desktop app and tools (sim/, web/, docs/assets/js, desktop/, tools/)
+      MIT                            LICENSES/MIT.txt
+  Documentation, CAD models and data (README, notes/, cad/, exports/, docs/ text and images, sim/*.json)
+      CC BY-SA 4.0                   LICENSES/CC-BY-SA-4.0.txt
+  Logger printed circuit board (when published, pcb/)
+      CERN-OHL-S-2.0                 LICENSES/CERN-OHL-S-2.0.txt
+
+Third-party files keep their own licences: docs/vendor/three (MIT), docs/vendor/katex (MIT),
+docs/vendor/fonts (SIL Open Font License 1.1). Motor thrust curves in sim/motors come from
+ThrustCurve.org simfiles, cited per motor in sim/motors/motors.json.

@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The app window needs nothing from the system: no file, shell or network commands.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

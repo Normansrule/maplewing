@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Maplewing render</title>
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"../docs/vendor/three/three.module.min.js","three/addons/":"../docs/vendor/three/addons/"}}</script>
+</head><body><canvas></canvas>
+<script type="module">
+// Renders one CAD part or assembly for the README and the website (tools/render.mjs drives it). MIT.
+import * as THREE from "three";
+import { loadPart, materials, partMaterial, studio, buildSeedling, buildDewdrop } from "../docs/assets/js/rocket3d.js";
+const q = new URLSearchParams(location.search);
+const id = q.get("part"), W = +q.get("w") || 1200, H = +q.get("h") || 1200, bg = q.get("bg") || "none", az = +(q.get("az") ?? 35), el = +(q.get("el") ?? 24);
+const canvas = document.querySelector("canvas");
+const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+r.setPixelRatio(1); r.setSize(W, H); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.NeutralToneMapping; r.toneMappingExposure = 1.05;
+r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+if (bg !== "none") {
+  const c = document.createElement("canvas"); c.width = 16; c.height = 512; const g = c.getContext("2d");
+  const grad = g.createLinearGradient(0, 0, 0, 512);
+  if (bg === "dark") { grad.addColorStop(0, "#1b2027"); grad.addColorStop(1, "#0b0d10"); } else { grad.addColorStop(0, "#f4f7f9"); grad.addColorStop(1, "#d9e2ea"); }
+  g.fillStyle = grad; g.fillRect(0, 0, 16, 512); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t;
+}
+const lights = await studio(r, scene);
+const M = materials(bg === "dark");
+let obj;
+if (id === "seedling_assembly" || id === "seedling_folded" || id === "seedling_exploded") {
+  obj = await buildSeedling("../docs/", M); obj.scale.setScalar(0.01);
+  obj.userData.blades.forEach((b) => b.fold(id === "seedling_folded" ? 1 : 0));
+  if (id === "seedling_exploded") {
+    const R = obj.userData.rocket; obj.userData.setNose(110);
+    R.children.forEach((c) => { if (c.geometry?.type === "BufferGeometry" && c.material === M.carbon) c.position.z -= 90; });
+  }
+} else if (id === "dewdrop_assembly") {
+  obj = await buildDewdrop("../docs/", M); obj.scale.setScalar(0.01); obj.userData.blades.forEach((b) => b.fold(0));
+} else {
+  const g = await loadPart(id, "../docs/");
+  const m = new THREE.Mesh(g, partMaterial(id, M)); m.castShadow = true; m.receiveShadow = true;
+  const holder = new THREE.Group(); holder.rotation.x = -Math.PI / 2; holder.add(m);
+  obj = new THREE.Group(); obj.add(holder);
+  g.computeBoundingBox(); const s = g.boundingBox.getSize(new THREE.Vector3());
+  obj.scale.setScalar(3 / Math.max(s.x, s.y, s.z));
+  if (id.endsWith("rotor_blade")) { holder.rotation.set(-Math.PI / 2 + 0.25, 0, 0.45); }
+}
+const tilt = +(q.get("tilt") || 0);
+if (tilt) { const w = new THREE.Group(); w.add(obj); w.rotation.z = THREE.MathUtils.degToRad(-tilt); obj = w; }
+scene.add(obj);
+const box = new THREE.Box3().setFromObject(obj), ctr = box.getCenter(new THREE.Vector3());
+obj.position.sub(new THREE.Vector3(ctr.x, box.min.y, ctr.z));
+const box2 = new THREE.Box3().setFromObject(obj), sph = box2.getBoundingSphere(new THREE.Sphere());
+const floor = new THREE.Mesh(new THREE.CircleGeometry(sph.radius * 4, 64), new THREE.ShadowMaterial({ opacity: bg === "dark" ? 0.45 : 0.2 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; if (!tilt) scene.add(floor); else obj.position.y += sph.radius * 0.0;
+Object.assign(lights.key.shadow.camera, { left: -sph.radius * 2, right: sph.radius * 2, top: sph.radius * 2, bottom: -sph.radius * 2 });
+lights.key.position.set(sph.radius * 1.5, sph.radius * 4, sph.radius * 2); lights.key.shadow.camera.updateProjectionMatrix();
+const cam = new THREE.PerspectiveCamera(26, W / H, 0.01, 1000);
+const d = sph.radius / Math.sin(THREE.MathUtils.degToRad(13)) * (+q.get("zoom") || 1.02);
+const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
+cam.position.set(Math.sin(a) * Math.cos(e) * d, sph.center.y + Math.sin(e) * d, Math.cos(a) * Math.cos(e) * d);
+cam.lookAt(0, sph.center.y * (+q.get("ty") || 1), 0);
+r.render(scene, cam); r.render(scene, cam);
+window.__done = true;
+</script></body></html>

@@ -1,0 +1,1526 @@
+{
+ "ring": [
+  {
+   "vehicle": {
+    "name": "Taproot",
+    "tier": "Class 1 normal",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Taproot",
+      "d": 0.0248,
+      "cd": 0.643,
+      "tail": "fins",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.006,
+        "shared_id": "NC-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.02,
+        "shared_id": "BT-50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "fins",
+        "mass": 0.005,
+        "shared_id": "FIN-3",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.003,
+        "shared_id": "CB-BT50",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "parachute",
+       "backup": null,
+       "deploy": "motor_ejection",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.305,
+       "backup_d": 0.0
+      },
+      "motor": "C6",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": 5
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 1 (model rocket)",
+    "cert_level": "none",
+    "total_impulse_Ns": 9,
+    "propellant_kg": 0.011,
+    "largest_motor": "C6 (C)"
+   },
+   "flight": {
+    "apogee_m": 376,
+    "vmax_ms": 115,
+    "mach_max": 0.34,
+    "t_apogee_s": 8.0,
+    "qmax_kPa": 7,
+    "stages": [
+     {
+      "name": "Taproot",
+      "sep_alt_m": 376,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ],
+    "ejection": {
+     "t_s": 6.9,
+     "alt_m": 369,
+     "v_ms": 11.5
+    }
+   },
+   "landing": [
+    {
+     "stage": "Taproot",
+     "landing_mass_kg": 0.047,
+     "primary": "parachute",
+     "primary_D_m": 0.3,
+     "v_land_ms": 2.8,
+     "landing_J": 0.2,
+     "drogue": false
+    }
+   ],
+   "ejection_options": [
+    {
+     "delay_s": 3,
+     "t_s": 4.9,
+     "alt_m": 324,
+     "v_ms": 34.9
+    },
+    {
+     "delay_s": 5,
+     "t_s": 6.9,
+     "alt_m": 369,
+     "v_ms": 11.5
+    },
+    {
+     "delay_s": 7,
+     "t_s": 8.9,
+     "alt_m": 372,
+     "v_ms": -8.2
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Seedling",
+    "tier": "Class 1 rotor pathfinder",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Seedling",
+      "d": 0.0248,
+      "cd": 0.7,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.006,
+        "shared_id": "NC-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.03,
+        "shared_id": "BT-50-S",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "motor_mount",
+        "mass": 0.008,
+        "shared_id": "MM-18",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.013,
+        "shared_id": "RB-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.0111,
+        "shared_id": "TAIL-BT50-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": null,
+       "deploy": "motor_ejection",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.3,
+       "backup_d": 0.0
+      },
+      "motor": "C6",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": 5
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 1 (model rocket)",
+    "cert_level": "none",
+    "total_impulse_Ns": 9,
+    "propellant_kg": 0.011,
+    "largest_motor": "C6 (C)"
+   },
+   "flight": {
+    "apogee_m": 263,
+    "vmax_ms": 75,
+    "mach_max": 0.22,
+    "t_apogee_s": 7.6,
+    "qmax_kPa": 3,
+    "stages": [
+     {
+      "name": "Seedling",
+      "sep_alt_m": 263,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ],
+    "ejection": {
+     "t_s": 6.9,
+     "alt_m": 260,
+     "v_ms": 7.1
+    }
+   },
+   "landing": [
+    {
+     "stage": "Seedling",
+     "landing_mass_kg": 0.081,
+     "primary": "rotor",
+     "primary_D_m": 0.3,
+     "v_land_ms": 4.4,
+     "landing_J": 0.8,
+     "drogue": false
+    }
+   ],
+   "ejection_options": [
+    {
+     "delay_s": 3,
+     "t_s": 4.9,
+     "alt_m": 225,
+     "v_ms": 28.1
+    },
+    {
+     "delay_s": 5,
+     "t_s": 6.9,
+     "alt_m": 260,
+     "v_ms": 7.1
+    },
+    {
+     "delay_s": 7,
+     "t_s": 8.9,
+     "alt_m": 254,
+     "v_ms": -12.4
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Dewdrop",
+    "tier": "Water",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": {
+     "psi": 60,
+     "water_l": 0.6,
+     "bottle": "PET",
+     "remote_release": true,
+     "proof_psi": 90
+    },
+    "stages": [
+     {
+      "name": "Dewdrop",
+      "d": 0.105,
+      "cd": 0.55,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "bottle",
+        "mass": 0.05,
+        "shared_id": "PET-2L",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "nose",
+        "mass": 0.0367,
+        "shared_id": "NC-W",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.0245,
+        "shared_id": "RB-W",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.0485,
+        "shared_id": "TAIL-W-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": null,
+       "deploy": "mechanical_timer",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.44,
+       "backup_d": 0.0
+      },
+      "motor": null,
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "not an FAA amateur rocket (water/air)",
+    "cert_level": "none",
+    "total_impulse_Ns": 0
+   },
+   "flight": {
+    "apogee_m": 40.8,
+    "vmax_ms": 40.9,
+    "mach_max": 0.12,
+    "t_apogee_s": 2.6,
+    "stages": [
+     {
+      "name": "Dewdrop",
+      "sep_alt_m": 40.8
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Dewdrop",
+     "landing_mass_kg": 0.16,
+     "primary": "rotor",
+     "primary_D_m": 0.44,
+     "v_land_ms": 4.2,
+     "landing_J": 1.4,
+     "drogue": false
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-1",
+    "tier": "Single stage",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Maplewing-1 L1 (H128W)",
+      "d": 0.0574,
+      "cd": 0.65,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.15,
+        "shared_id": "NC-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.35,
+        "shared_id": "AV-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.3,
+        "shared_id": "RB-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.12,
+        "shared_id": "CB-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.25,
+        "shared_id": "BT-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.25,
+        "shared_id": "TAIL-54-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "H128W",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 1",
+    "total_impulse_Ns": 178,
+    "propellant_kg": 0.094,
+    "largest_motor": "H128W (H)"
+   },
+   "flight": {
+    "apogee_m": 455,
+    "vmax_ms": 99,
+    "mach_max": 0.29,
+    "t_apogee_s": 9.8,
+    "qmax_kPa": 5,
+    "stages": [
+     {
+      "name": "Maplewing-1 L1 (H128W)",
+      "sep_alt_m": 455,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Maplewing-1 L1 (H128W)",
+     "landing_mass_kg": 1.532,
+     "primary": "rotor",
+     "primary_D_m": 0.88,
+     "v_land_ms": 6.5,
+     "landing_J": 32.4,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 0.75,
+     "v_backup_ms": 6.5
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-1 L2 config",
+    "tier": "Single stage",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Maplewing-1 L2 (J350W)",
+      "d": 0.1016,
+      "cd": 0.62,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.45,
+        "shared_id": "NC-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.35,
+        "shared_id": "CB-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.8,
+        "shared_id": "BT-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.6,
+        "shared_id": "TAIL-102-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "J350W",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 2",
+    "total_impulse_Ns": 669,
+    "propellant_kg": 0.375,
+    "largest_motor": "J350W (J)"
+   },
+   "flight": {
+    "apogee_m": 763,
+    "vmax_ms": 140,
+    "mach_max": 0.42,
+    "t_apogee_s": 12.1,
+    "qmax_kPa": 10,
+    "stages": [
+     {
+      "name": "Maplewing-1 L2 (J350W)",
+      "sep_alt_m": 763,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Maplewing-1 L2 (J350W)",
+     "landing_mass_kg": 3.89,
+     "primary": "rotor",
+     "primary_D_m": 1.4,
+     "v_land_ms": 6.5,
+     "landing_J": 82.2,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 1.19,
+     "v_backup_ms": 6.5
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-2",
+    "tier": "Class 2 two stage",
+    "site_alt": 1190,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Core-98 booster (O3400)",
+      "d": 0.102,
+      "cd": 0.6075,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "motor_mount",
+        "mass": 0.6,
+        "shared_id": "MM-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.9,
+        "shared_id": "BT-98-B",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "interstage",
+        "mass": 0.4,
+        "shared_id": "IS-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.7,
+        "shared_id": "TAIL-98-ring",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-98",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "O3400",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     },
+     {
+      "name": "Core-98 sustainer (N5600)",
+      "d": 0.102,
+      "cd": 0.54,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.6,
+        "shared_id": "NC-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.4,
+        "shared_id": "CB-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 1.4,
+        "shared_id": "BT-98-S",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.7,
+        "shared_id": "TAIL-98-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": true,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "N5600",
+      "ignition": "commercial_altimeter",
+      "inhibits": [
+       "altitude",
+       "tilt",
+       "time"
+      ],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 3",
+    "total_impulse_Ns": 34674,
+    "propellant_kg": 17.635,
+    "largest_motor": "O3400 (O)"
+   },
+   "flight": {
+    "apogee_m": 21767,
+    "vmax_ms": 1258,
+    "mach_max": 3.99,
+    "t_apogee_s": 61.5,
+    "qmax_kPa": 506,
+    "stages": [
+     {
+      "name": "Core-98 booster (O3400)",
+      "sep_alt_m": 3105,
+      "sep_v_ms": 435,
+      "sep_mach": 1.35
+     },
+     {
+      "name": "Core-98 sustainer (N5600)",
+      "sep_alt_m": 21767,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Core-98 booster (O3400)",
+     "landing_mass_kg": 9.57,
+     "primary": "rotor",
+     "primary_D_m": 2.19,
+     "v_land_ms": 6.5,
+     "landing_J": 202.2,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 1.86,
+     "v_backup_ms": 6.5
+    },
+    {
+     "stage": "Core-98 sustainer (N5600)",
+     "landing_mass_kg": 9.417,
+     "primary": "rotor",
+     "primary_D_m": 2.17,
+     "v_land_ms": 6.5,
+     "landing_J": 198.9,
+     "drogue": true,
+     "backup": "parachute",
+     "backup_D_m": 1.84,
+     "v_backup_ms": 6.5
+    }
+   ]
+  }
+ ],
+ "fins": [
+  {
+   "vehicle": {
+    "name": "Taproot",
+    "tier": "Class 1 normal",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Taproot",
+      "d": 0.0248,
+      "cd": 0.643,
+      "tail": "fins",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.006,
+        "shared_id": "NC-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.02,
+        "shared_id": "BT-50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "fins",
+        "mass": 0.005,
+        "shared_id": "FIN-3",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.003,
+        "shared_id": "CB-BT50",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "parachute",
+       "backup": null,
+       "deploy": "motor_ejection",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.305,
+       "backup_d": 0.0
+      },
+      "motor": "C6",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": 5
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 1 (model rocket)",
+    "cert_level": "none",
+    "total_impulse_Ns": 9,
+    "propellant_kg": 0.011,
+    "largest_motor": "C6 (C)"
+   },
+   "flight": {
+    "apogee_m": 376,
+    "vmax_ms": 115,
+    "mach_max": 0.34,
+    "t_apogee_s": 8.0,
+    "qmax_kPa": 7,
+    "stages": [
+     {
+      "name": "Taproot",
+      "sep_alt_m": 376,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ],
+    "ejection": {
+     "t_s": 6.9,
+     "alt_m": 369,
+     "v_ms": 11.5
+    }
+   },
+   "landing": [
+    {
+     "stage": "Taproot",
+     "landing_mass_kg": 0.047,
+     "primary": "parachute",
+     "primary_D_m": 0.3,
+     "v_land_ms": 2.8,
+     "landing_J": 0.2,
+     "drogue": false
+    }
+   ],
+   "ejection_options": [
+    {
+     "delay_s": 3,
+     "t_s": 4.9,
+     "alt_m": 324,
+     "v_ms": 34.9
+    },
+    {
+     "delay_s": 5,
+     "t_s": 6.9,
+     "alt_m": 369,
+     "v_ms": 11.5
+    },
+    {
+     "delay_s": 7,
+     "t_s": 8.9,
+     "alt_m": 372,
+     "v_ms": -8.2
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Seedling",
+    "tier": "Class 1 rotor pathfinder",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Seedling",
+      "d": 0.0248,
+      "cd": 0.7,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.006,
+        "shared_id": "NC-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.03,
+        "shared_id": "BT-50-S",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "motor_mount",
+        "mass": 0.008,
+        "shared_id": "MM-18",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.013,
+        "shared_id": "RB-BT50",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.0111,
+        "shared_id": "TAIL-BT50-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": null,
+       "deploy": "motor_ejection",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.3,
+       "backup_d": 0.0
+      },
+      "motor": "C6",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": 5
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 1 (model rocket)",
+    "cert_level": "none",
+    "total_impulse_Ns": 9,
+    "propellant_kg": 0.011,
+    "largest_motor": "C6 (C)"
+   },
+   "flight": {
+    "apogee_m": 263,
+    "vmax_ms": 75,
+    "mach_max": 0.22,
+    "t_apogee_s": 7.6,
+    "qmax_kPa": 3,
+    "stages": [
+     {
+      "name": "Seedling",
+      "sep_alt_m": 263,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ],
+    "ejection": {
+     "t_s": 6.9,
+     "alt_m": 260,
+     "v_ms": 7.1
+    }
+   },
+   "landing": [
+    {
+     "stage": "Seedling",
+     "landing_mass_kg": 0.081,
+     "primary": "rotor",
+     "primary_D_m": 0.3,
+     "v_land_ms": 4.4,
+     "landing_J": 0.8,
+     "drogue": false
+    }
+   ],
+   "ejection_options": [
+    {
+     "delay_s": 3,
+     "t_s": 4.9,
+     "alt_m": 225,
+     "v_ms": 28.1
+    },
+    {
+     "delay_s": 5,
+     "t_s": 6.9,
+     "alt_m": 260,
+     "v_ms": 7.1
+    },
+    {
+     "delay_s": 7,
+     "t_s": 8.9,
+     "alt_m": 254,
+     "v_ms": -12.4
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Dewdrop",
+    "tier": "Water",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": {
+     "psi": 60,
+     "water_l": 0.6,
+     "bottle": "PET",
+     "remote_release": true,
+     "proof_psi": 90
+    },
+    "stages": [
+     {
+      "name": "Dewdrop",
+      "d": 0.105,
+      "cd": 0.55,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "bottle",
+        "mass": 0.05,
+        "shared_id": "PET-2L",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "nose",
+        "mass": 0.0367,
+        "shared_id": "NC-W",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.0245,
+        "shared_id": "RB-W",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.0485,
+        "shared_id": "TAIL-W-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": null,
+       "deploy": "mechanical_timer",
+       "redundant_altimeters": false,
+       "drogue": false,
+       "primary_d": 0.44,
+       "backup_d": 0.0
+      },
+      "motor": null,
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "not an FAA amateur rocket (water/air)",
+    "cert_level": "none",
+    "total_impulse_Ns": 0
+   },
+   "flight": {
+    "apogee_m": 40.8,
+    "vmax_ms": 40.9,
+    "mach_max": 0.12,
+    "t_apogee_s": 2.6,
+    "stages": [
+     {
+      "name": "Dewdrop",
+      "sep_alt_m": 40.8
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Dewdrop",
+     "landing_mass_kg": 0.16,
+     "primary": "rotor",
+     "primary_D_m": 0.44,
+     "v_land_ms": 4.2,
+     "landing_J": 1.4,
+     "drogue": false
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-1",
+    "tier": "Single stage",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Maplewing-1 L1 (H128W)",
+      "d": 0.0574,
+      "cd": 0.65,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.15,
+        "shared_id": "NC-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.35,
+        "shared_id": "AV-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.3,
+        "shared_id": "RB-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.12,
+        "shared_id": "CB-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.25,
+        "shared_id": "BT-54",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.25,
+        "shared_id": "TAIL-54-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "H128W",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 1",
+    "total_impulse_Ns": 178,
+    "propellant_kg": 0.094,
+    "largest_motor": "H128W (H)"
+   },
+   "flight": {
+    "apogee_m": 455,
+    "vmax_ms": 99,
+    "mach_max": 0.29,
+    "t_apogee_s": 9.8,
+    "qmax_kPa": 5,
+    "stages": [
+     {
+      "name": "Maplewing-1 L1 (H128W)",
+      "sep_alt_m": 455,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Maplewing-1 L1 (H128W)",
+     "landing_mass_kg": 1.532,
+     "primary": "rotor",
+     "primary_D_m": 0.88,
+     "v_land_ms": 6.5,
+     "landing_J": 32.4,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 0.75,
+     "v_backup_ms": 6.5
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-1 L2 config",
+    "tier": "Single stage",
+    "site_alt": 1300.0,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Maplewing-1 L2 (J350W)",
+      "d": 0.1016,
+      "cd": 0.62,
+      "tail": "ring",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.45,
+        "shared_id": "NC-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.35,
+        "shared_id": "CB-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.8,
+        "shared_id": "BT-102",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "ring_tail",
+        "mass": 0.6,
+        "shared_id": "TAIL-102-ring",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "J350W",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 2",
+    "total_impulse_Ns": 669,
+    "propellant_kg": 0.375,
+    "largest_motor": "J350W (J)"
+   },
+   "flight": {
+    "apogee_m": 763,
+    "vmax_ms": 140,
+    "mach_max": 0.42,
+    "t_apogee_s": 12.1,
+    "qmax_kPa": 10,
+    "stages": [
+     {
+      "name": "Maplewing-1 L2 (J350W)",
+      "sep_alt_m": 763,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Maplewing-1 L2 (J350W)",
+     "landing_mass_kg": 3.89,
+     "primary": "rotor",
+     "primary_D_m": 1.4,
+     "v_land_ms": 6.5,
+     "landing_J": 82.2,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 1.19,
+     "v_backup_ms": 6.5
+    }
+   ]
+  },
+  {
+   "vehicle": {
+    "name": "Maplewing-2",
+    "tier": "Class 2 two stage",
+    "site_alt": 1190,
+    "staging_delay_s": 2.0,
+    "water": null,
+    "stages": [
+     {
+      "name": "Core-98 booster (O3400)",
+      "d": 0.102,
+      "cd": 0.45,
+      "tail": "fins",
+      "modules": [
+       {
+        "kind": "motor_mount",
+        "mass": 0.6,
+        "shared_id": "MM-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 0.9,
+        "shared_id": "BT-98-B",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "interstage",
+        "mass": 0.4,
+        "shared_id": "IS-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "fins",
+        "mass": 0.7,
+        "shared_id": "TAIL-98-fins",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-98",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": false,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "O3400",
+      "ignition": "ground",
+      "inhibits": [],
+      "delay_s": null
+     },
+     {
+      "name": "Core-98 sustainer (N5600)",
+      "d": 0.102,
+      "cd": 0.4,
+      "tail": "fins",
+      "modules": [
+       {
+        "kind": "nose",
+        "mass": 0.6,
+        "shared_id": "NC-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "avbay",
+        "mass": 0.8,
+        "shared_id": "AV-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "rotor_bay",
+        "mass": 0.6,
+        "shared_id": "RB-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "chute_bay",
+        "mass": 0.4,
+        "shared_id": "CB-98",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "body",
+        "mass": 1.4,
+        "shared_id": "BT-98-S",
+        "reusable": true,
+        "metal": false
+       },
+       {
+        "kind": "fins",
+        "mass": 0.7,
+        "shared_id": "TAIL-98-fins",
+        "reusable": true,
+        "metal": false
+       }
+      ],
+      "landing": {
+       "primary": "rotor",
+       "backup": "parachute",
+       "deploy": "commercial_altimeter",
+       "redundant_altimeters": true,
+       "drogue": true,
+       "primary_d": 0.0,
+       "backup_d": 0.0
+      },
+      "motor": "N5600",
+      "ignition": "commercial_altimeter",
+      "inhibits": [
+       "altitude",
+       "tilt",
+       "time"
+      ],
+      "delay_s": null
+     }
+    ]
+   },
+   "errors": [],
+   "class": {
+    "faa_class": "Class 2 (high-power)",
+    "cert_level": "Level 3",
+    "total_impulse_Ns": 34674,
+    "propellant_kg": 17.635,
+    "largest_motor": "O3400 (O)"
+   },
+   "flight": {
+    "apogee_m": 33238,
+    "vmax_ms": 1346,
+    "mach_max": 4.29,
+    "t_apogee_s": 81.0,
+    "qmax_kPa": 562,
+    "stages": [
+     {
+      "name": "Core-98 booster (O3400)",
+      "sep_alt_m": 3222,
+      "sep_v_ms": 473,
+      "sep_mach": 1.46
+     },
+     {
+      "name": "Core-98 sustainer (N5600)",
+      "sep_alt_m": 33238,
+      "sep_v_ms": 0,
+      "sep_mach": 0
+     }
+    ]
+   },
+   "landing": [
+    {
+     "stage": "Core-98 booster (O3400)",
+     "landing_mass_kg": 9.57,
+     "primary": "rotor",
+     "primary_D_m": 2.19,
+     "v_land_ms": 6.5,
+     "landing_J": 202.2,
+     "drogue": false,
+     "backup": "parachute",
+     "backup_D_m": 1.86,
+     "v_backup_ms": 6.5
+    },
+    {
+     "stage": "Core-98 sustainer (N5600)",
+     "landing_mass_kg": 9.417,
+     "primary": "rotor",
+     "primary_D_m": 2.17,
+     "v_land_ms": 6.5,
+     "landing_J": 198.9,
+     "drogue": true,
+     "backup": "parachute",
+     "backup_D_m": 1.84,
+     "v_backup_ms": 6.5
+    }
+   ]
+  }
+ ],
+ "water_best_fill": [
+  600,
+  41.01112452814535
+ ]
+}

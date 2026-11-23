@@ -1,0 +1,233 @@
+{
+ "_source": "ThrustCurve.org API v1 (search.json + download.json), fetched 2026-11-03. Masses are the ThrustCurve motor record (certification data); curves are the .eng files listed. Cite the motor and simfile pages, not the raw files. E16, F26 and G40W added 2026-11-04 (ThrustCurve lists Estes E12 as out of production, so the ladder uses E16). Ejection delays (delays_s) from the ThrustCurve search.json 'delays' field, fetched 2026-11-18; the 0 s booster variant is left out.",
+ "motors": {
+  "A8": {
+   "eng": "Estes_A8.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/A8/",
+   "motorId": "5f4294d2000231000000000b",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000004e3/",
+   "record": {
+    "total_impulse_Ns": 2.5,
+    "burn_time_s": 0.73,
+    "max_thrust_N": 9.73,
+    "prop_mass_kg": 0.0033,
+    "total_mass_kg": 0.0163,
+    "cert_org": "National Association of Rocketry"
+   },
+   "delays_s": [
+    3,
+    5
+   ]
+  },
+  "B6": {
+   "eng": "Estes_B6.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/B6/",
+   "motorId": "5f4294d20002310000000010",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e90000000414/",
+   "record": {
+    "total_impulse_Ns": 4.33,
+    "burn_time_s": 0.86,
+    "max_thrust_N": 12.14,
+    "prop_mass_kg": 0.0056,
+    "total_mass_kg": 0.0191,
+    "cert_org": "National Association of Rocketry"
+   },
+   "delays_s": [
+    2,
+    4,
+    6
+   ]
+  },
+  "C6": {
+   "eng": "Estes_C6.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/C6/",
+   "motorId": "5f4294d20002310000000015",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/69eb2379c7d63000021d8c29/",
+   "record": {
+    "total_impulse_Ns": 8.82,
+    "burn_time_s": 1.86,
+    "max_thrust_N": 14.09,
+    "prop_mass_kg": 0.0108,
+    "total_mass_kg": 0.0241,
+    "cert_org": "National Association of Rocketry"
+   },
+   "delays_s": [
+    3,
+    5,
+    7
+   ]
+  },
+  "D12": {
+   "eng": "Estes_D12.eng",
+   "source": "user (made from NAR published data)",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/D12/",
+   "motorId": "5f4294d20002310000000020",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000004ea/",
+   "record": {
+    "total_impulse_Ns": 16.84,
+    "burn_time_s": 1.65,
+    "max_thrust_N": 29.73,
+    "prop_mass_kg": 0.0211,
+    "total_mass_kg": 0.044,
+    "cert_org": "National Association of Rocketry"
+   },
+   "delays_s": [
+    3,
+    5,
+    7
+   ]
+  },
+  "H128W": {
+   "eng": "AeroTech_H128W.eng",
+   "source": "cert (TRA/TMT 1997 test stand)",
+   "motor_page": "https://www.thrustcurve.org/motors/AeroTech/H128W/",
+   "motorId": "5f4294d20002310000000083",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e9000000000d/",
+   "record": {
+    "total_impulse_Ns": 172.9,
+    "burn_time_s": 1.27,
+    "max_thrust_N": 168.7,
+    "prop_mass_kg": 0.0942,
+    "total_mass_kg": 0.206,
+    "cert_org": "Tripoli Rocketry Association, Inc."
+   },
+   "type": "reload"
+  },
+  "J350W": {
+   "eng": "AeroTech_J350W.eng",
+   "source": "user (no source comment)",
+   "motor_page": "https://www.thrustcurve.org/motors/AeroTech/J350W/",
+   "motorId": "5f4294d2000231000000010d",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000002a9/",
+   "record": {
+    "total_impulse_Ns": 700,
+    "burn_time_s": 1.5,
+    "max_thrust_N": 822.5,
+    "prop_mass_kg": 0.37510000000000004,
+    "total_mass_kg": 0.665,
+    "cert_org": "Tripoli Rocketry Association, Inc."
+   },
+   "type": "reload"
+  },
+  "E16": {
+   "eng": "Estes_E16.eng",
+   "source": "cert (2013 file matching NAR certification averages)",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/E16/",
+   "motorId": "5f4294d200023100000003f8",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e6/",
+   "record": {
+    "total_impulse_Ns": 33.38,
+    "burn_time_s": 2.09,
+    "prop_mass_kg": 0.04,
+    "total_mass_kg": 0.084,
+    "cert_org": "National Association of Rocketry"
+   }
+  },
+  "F26": {
+   "eng": "Estes_F26.eng",
+   "source": "user (AeroTech pre-certification data, RockSim 2005; same motor as AeroTech F26FJ)",
+   "motor_page": "https://www.thrustcurve.org/motors/Estes/F26/",
+   "motorId": "5f4294d200023100000003e5",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5fc5ac0c995c080004e6edc8/",
+   "record": {
+    "total_impulse_Ns": 62.19,
+    "burn_time_s": 2.31,
+    "prop_mass_kg": 0.0431,
+    "total_mass_kg": 0.1008,
+    "cert_org": "National Association of Rocketry"
+   }
+  },
+  "G40W": {
+   "eng": "AeroTech_G40W.eng",
+   "source": "user (AeroTech-supplied curve, RockSim 2005)",
+   "motor_page": "https://www.thrustcurve.org/motors/AeroTech/G40W/",
+   "motorId": "5f4294d20002310000000059",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e90000000463/",
+   "record": {
+    "total_impulse_Ns": 97.14,
+    "burn_time_s": 2.38,
+    "prop_mass_kg": 0.0538,
+    "total_mass_kg": 0.123,
+    "cert_org": "National Association of Rocketry"
+   }
+  },
+  "O5500X": {
+   "eng": "AeroTech_O5500X.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/AeroTech/O5500X-PS/",
+   "motorId": "5f4294d2000231000000046c",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/63c1fca4c1da530004d92ed3/",
+   "record": {
+    "total_impulse_Ns": 21384,
+    "burn_time_s": 4.03,
+    "prop_mass_kg": 9.779,
+    "total_mass_kg": 16.783,
+    "cert_org": "Tripoli Rocketry Association, Inc."
+   },
+   "type": "single-use"
+  },
+  "N5600": {
+   "eng": "Cesaroni_N5600.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Cesaroni/13628N5600-P/",
+   "motorId": "5f4294d200023100000003f4",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e0/",
+   "record": {
+    "total_impulse_Ns": 13628,
+    "burn_time_s": 2.42,
+    "prop_mass_kg": 6.363,
+    "total_mass_kg": 11.28,
+    "cert_org": "Canadian Association of Rocketry"
+   },
+   "type": "reload"
+  },
+  "O8000": {
+   "eng": "Cesaroni_O8000.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Cesaroni/40960O8000-P/",
+   "motorId": "5f4294d20002310000000215",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e90000000430/",
+   "record": {
+    "total_impulse_Ns": 40960,
+    "burn_time_s": 5.1,
+    "prop_mass_kg": 18.61,
+    "total_mass_kg": 32.672,
+    "cert_org": "Canadian Association of Rocketry"
+   },
+   "type": "reload"
+  },
+  "O3400": {
+   "eng": "Cesaroni_O3400.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Cesaroni/21062O3400-IM-P/",
+   "motorId": "5f4294d200023100000003ee",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007c0/",
+   "type": "reload",
+   "record": {
+    "total_impulse_Ns": 21062.2,
+    "burn_time_s": 6.16,
+    "prop_mass_kg": 11.272,
+    "total_mass_kg": 16.842,
+    "cert_org": "Canadian Association of Rocketry"
+   }
+  },
+  "M2250": {
+   "eng": "Cesaroni_M2250.eng",
+   "source": "cert",
+   "motor_page": "https://www.thrustcurve.org/motors/Cesaroni/5472M2250-CS-P/",
+   "motorId": "5f4294d20002310000000316",
+   "simfile_page": "https://www.thrustcurve.org/simfiles/5f4294d20002e900000006f4/",
+   "type": "reload",
+   "record": {
+    "total_impulse_Ns": 5472.2,
+    "burn_time_s": 2.41,
+    "prop_mass_kg": 2.628,
+    "total_mass_kg": 4.415,
+    "cert_org": "Canadian Association of Rocketry"
+   }
+  }
+ }
+}

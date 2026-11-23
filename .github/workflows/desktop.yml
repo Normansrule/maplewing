@@ -1,0 +1,67 @@
+# Desktop app for Windows, macOS (Apple silicon + Intel) and Linux, built with Tauri 2 from docs/.
+# Every push to main keeps the installers as workflow artifacts; a version tag (v*) publishes them
+# to a GitHub release:  git tag v0.1.0 && git push origin v0.1.0
+name: desktop
+on:
+  push:
+    tags: ["v*"]
+    branches: [main]
+    paths: ["docs/**", "desktop/**", ".github/workflows/desktop.yml"]
+  pull_request:
+    paths: ["desktop/**", ".github/workflows/desktop.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-22.04, args: "", name: linux}
+          - {os: windows-latest, args: "", name: windows}
+          - {os: macos-latest, args: "--target universal-apple-darwin", name: macos}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.name == 'macos' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: swatinem/rust-cache@v2
+        with: {workspaces: "desktop/src-tauri -> target"}
+      - name: Linux build dependencies
+        if: matrix.name == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: Install the Tauri CLI
+        working-directory: desktop
+        run: npm ci
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tauriScript: npx tauri
+          args: ${{ matrix.args }}
+          tagName: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
+          releaseName: ${{ startsWith(github.ref, 'refs/tags/v') && format('Maplewing {0}', github.ref_name) || '' }}
+          releaseBody: |
+            Maplewing desktop app: the configurator, the rocket lineup and the printable parts with 3D views, offline.
+            Windows: .msi or -setup.exe. macOS: .dmg (Apple silicon and Intel). Linux: .AppImage or .deb.
+            Not code-signed yet. Windows: More info, then Run anyway. macOS: right-click the app, then Open.
+          releaseDraft: false
+          prerelease: false
+      - uses: actions/upload-artifact@v4
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          name: Maplewing-${{ matrix.name }}
+          path: |
+            desktop/src-tauri/target/**/release/bundle/msi/*.msi
+            desktop/src-tauri/target/**/release/bundle/nsis/*.exe
+            desktop/src-tauri/target/**/release/bundle/dmg/*.dmg
+            desktop/src-tauri/target/**/release/bundle/appimage/*.AppImage
+            desktop/src-tauri/target/**/release/bundle/deb/*.deb
+          if-no-files-found: ignore

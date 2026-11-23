@@ -1,0 +1,26 @@
+rocket,id,item,qty,unit_price_usd,line_usd,group,status,source,source_url,checked,notes
+Seedling,SDL-01,Ring tail (print seedling_ring_tail.stl in PETG),1,0.23,0.23,printed,filament,11.1 g of PETG at $20.99/kg,https://www.th3dstudio.com/product/polymaker-polylite-petg-black-1kg-1-75mm/,2026-11-22,Mass from CAD; weigh the print
+Seedling,SDL-02,Rotor hub with 6 deg fixed-pitch pads (print seedling_rotor_hub.stl),1,0.07,0.07,printed,filament,3.4 g of PETG at $20.99/kg,https://www.th3dstudio.com/product/polymaker-polylite-petg-black-1kg-1-75mm/,2026-11-22,
+Seedling,SDL-03,Balsa sheet 1/16 x 3 x 36 in (cut 3 blades to seedling_rotor_blade.stl),1,2.30,2.30,airframe,listed,Balsa USA,https://balsausa.com/products/1-16-x-3-x-36-balsa-sheet,2026-11-22,One sheet makes about 6 blades
+Seedling,SDL-04,Music wire 1/16 in x 36 in (hinge pins and blade springs),1,2.59,2.59,airframe,listed,HobbyTown (K&S 504; 3 pieces),https://www.hobbytown.com/k-s-engineering-music-wire-36.0621-16-15-ks5041/p204713,2026-11-22,In-store price at listing time
+Seedling,SDL-05,Estes BT-50 body tubes (3-pack),1,8.99,8.99,airframe,listed,Sirius Rocketry (EST-3086),https://www.siriusrocketry.biz/ishop/estes-bt-50-body-tube-3-pack-678.html,2026-11-22,Most stores list $8.99-10.29
+Seedling,SDL-06,Estes PNC-50KA nose cone (BT-50),1,2.99,2.99,airframe,listed,eRockets,https://www.erockets.biz/estes-plastic-nose-cone-for-bt-50-tube-2-75-long-est-071028/,2026-11-22,
+Seedling,SDL-07,Estes standard 18 mm engine mount kit (EST-3158),1,7.99,7.99,airframe,listed,Sirius Rocketry,https://www.siriusrocketry.biz/ishop/estes-standard-18mm-engine-mount-kit-1923.html,2026-11-22,Includes motor hook
+Seedling,SDL-08,Estes recovery wadding (75 sheets),1,5.99,5.99,per-flight,listed,AC Supply (EST-2274),https://www.acsupplyco.com/estes-recovery-wadding,2026-11-22,18-25 flights per bag
+Seedling,SDL-09,Estes B6-4 motors (3-pack with starters),1,13.90,13.90,per-flight,listed,Apogee Components,https://www.apogeerockets.com/index.php?main_page=product_info&products_id=12,2026-11-22,First flights: 95 m in the sim
+Seedling,SDL-10,Estes C6-5 motors (3-pack with starters),1,13.99,13.99,per-flight,listed,Estes (configurator check),https://www.thrustcurve.org/motors/Estes/C6/,2026-11-02,Later flights: 263 m in the sim
+Seedling,SDL-11,Estes Porta-Pad II launch pad and Electron Beam controller,1,29.99,29.99,ground,listed,Micromark (Estes MSRP $39.99),https://micromark.com/products/estes-porta-pad-ii-launch-pad-and-electron-beam-launch-controller,2026-11-22,Needs 4 AA batteries; a club pad also works
+Seedling,SDL-12,Shock cord and 1.22 m (48 in) launch rod,1,,,ground,needs quote,,,,Club rods are usually available; Seedling needs 1.22 m for about 16 m/s off the rod
+Taproot,TAP-01,"Estes Alpha III launch set (rocket, pad, controller)",1,39.99,39.99,airframe,verified,Estes,https://estesrockets.com,2026-11-02,The control airframe: 3 fins and a parachute
+Taproot,TAP-02,Estes recovery wadding (75 sheets),1,5.99,5.99,per-flight,verified,AC Supply (EST-2274),https://www.acsupplyco.com/estes-recovery-wadding,2026-11-22,
+Taproot,TAP-03,Estes C6-5 motors (3-pack with starters),1,13.99,13.99,per-flight,verified,Estes (configurator check),https://www.thrustcurve.org/motors/Estes/C6/,2026-11-02,
+Taproot,TAP-04,AA batteries for the controller (4),1,5.00,5.00,ground,estimate,,,,Estimate only
+Dewdrop,DEW-01,Ring tail sleeve (print dewdrop_ring_tail.stl),1,1.02,1.02,printed,filament,48.5 g of PETG at $20.99/kg,https://www.th3dstudio.com/product/polymaker-polylite-petg-black-1kg-1-75mm/,2026-11-22,
+Dewdrop,DEW-02,Rotor hub (print dewdrop_rotor_hub.stl),1,0.29,0.29,printed,filament,14.0 g of PETG at $20.99/kg,https://www.th3dstudio.com/product/polymaker-polylite-petg-black-1kg-1-75mm/,2026-11-22,
+Dewdrop,DEW-03,Nose with timer bay (print dewdrop_nose_timer_bay.stl),1,0.77,0.77,printed,filament,36.7 g of PETG at $20.99/kg,https://www.th3dstudio.com/product/polymaker-polylite-petg-black-1kg-1-75mm/,2026-11-22,Vase-mode walls
+Dewdrop,DEW-04,Balsa sheet 1/8 x 3 x 36 in (cut 3 blades to dewdrop_rotor_blade.stl),1,3.42,3.42,airframe,listed,Balsa USA,https://balsausa.com/products/1-8-x-3-x-36-balsa-sheet,2026-11-22,
+Dewdrop,DEW-05,2 L PET soda bottle,1,0.00,0.00,airframe,reused,,,,Proof-test each bottle full of water to 90 psi; never metal or glass
+Dewdrop,DEW-06,AquaPod bottle rocket launcher with 15 ft pull cord,1,39.50,39.50,ground,listed,Arbor Scientific,https://www.arborsci.com/products/super-bottle-rocket-launcher,2026-11-22,Its relief valve opens at 45 psi: below the 60 psi sim case (33 m instead of 41 m in the sim)
+Dewdrop,DEW-07,Wind-up release timer and bicycle pump with gauge,1,,,ground,needs quote,,,,
+Maplewing-1,MW1-01,AeroTech H128W-14A RMS-29/180 reload,1,39.49,39.49,per-flight,verified,AeroTech store,https://aerotech-rocketry.com/products/product_2df7f4ec-4f83-4bb0-01ce-b9a1932c0541,2026-11-22,Paper only until the energetics question is answered
+Maplewing-1,MW1-02,"54 mm airframe, RMS-29/180 case, two commercial altimeters, backup chute",1,,,airframe,needs quote,,,,No numbers until vendor quotes

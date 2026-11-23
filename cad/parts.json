@@ -1,0 +1,190 @@
+{
+ "pitch_deg": 6.0,
+ "material": "PETG",
+ "water": {
+  "bottle_od": 105.0,
+  "fit": 0.6,
+  "sleeve_h": 30.0,
+  "wall": 1.0,
+  "ring_od": 165.0,
+  "ring_chord": 45.0,
+  "ring_wall": 1.0,
+  "struts": 3,
+  "strut_t": 2.0,
+  "rotor_d": 440.0,
+  "blades": 3,
+  "root_cutout": 30.0,
+  "chord": 35.0,
+  "blade_t": 3.2,
+  "hub_h": 16.0,
+  "hub_wall": 1.2,
+  "pin_d": 2.1,
+  "nose_wall": 0.8,
+  "nose_len": 110.0,
+  "timer_bay": [
+   34.0,
+   34.0,
+   24.0
+  ]
+ },
+ "seedling": {
+  "tube_od": 24.8,
+  "fit": 0.3,
+  "sleeve_h": 25.0,
+  "wall": 0.8,
+  "ring_od": 58.0,
+  "ring_chord": 40.0,
+  "ring_wall": 0.8,
+  "struts": 3,
+  "strut_t": 1.2,
+  "rotor_d": 300.0,
+  "blades": 3,
+  "root_cutout": 15.0,
+  "chord": 25.0,
+  "blade_t": 1.6,
+  "hub_h": 12.0,
+  "hub_wall": 0.8,
+  "pin_d": 1.6
+ },
+ "maplewing1": {
+  "tube_od": 57.4,
+  "fit": 0.4,
+  "sleeve_h": 60.0,
+  "wall": 1.6,
+  "ring_od": 115.0,
+  "ring_chord": 80.0,
+  "ring_wall": 1.6,
+  "struts": 3,
+  "strut_t": 2.4,
+  "rotor_d": 880.0,
+  "blades": 3,
+  "root_cutout": 40.0,
+  "chord": 60.0,
+  "blade_t": 4.8,
+  "hub_h": 24.0,
+  "hub_wall": 2.0,
+  "pin_d": 3.1
+ },
+ "parts": {
+  "dewdrop_ring_tail": {
+   "qty": 1,
+   "shared_id": "TAIL-W-ring",
+   "material": "PETG",
+   "mass_g_each": 48.5,
+   "budget_g": 40,
+   "bbox_mm": [
+    165.1,
+    165.0,
+    45.1
+   ]
+  },
+  "dewdrop_rotor_hub": {
+   "qty": 1,
+   "shared_id": "RB-W",
+   "material": "PETG",
+   "mass_g_each": 14.0,
+   "budget_g": 12,
+   "bbox_mm": [
+    114.0,
+    112.6,
+    17.6
+   ]
+  },
+  "dewdrop_rotor_blade": {
+   "qty": 3,
+   "shared_id": "RB-W",
+   "material": "balsa",
+   "mass_g_each": 3.5,
+   "budget_g": 6,
+   "bbox_mm": [
+    198.4,
+    35.0,
+    6.4
+   ]
+  },
+  "dewdrop_nose_timer_bay": {
+   "qty": 1,
+   "shared_id": "NC-W",
+   "material": "PETG",
+   "mass_g_each": 36.7,
+   "budget_g": 30,
+   "bbox_mm": [
+    107.2,
+    107.2,
+    110.1
+   ]
+  },
+  "seedling_ring_tail": {
+   "qty": 1,
+   "shared_id": "TAIL-BT50-ring",
+   "material": "PETG",
+   "mass_g_each": 11.1,
+   "budget_g": 8,
+   "bbox_mm": [
+    58.0,
+    58.0,
+    40.0
+   ]
+  },
+  "seedling_rotor_hub": {
+   "qty": 1,
+   "shared_id": "RB-BT50",
+   "material": "PETG",
+   "mass_g_each": 3.4,
+   "budget_g": 4,
+   "bbox_mm": [
+    32.7,
+    37.1,
+    13.1
+   ]
+  },
+  "seedling_rotor_blade": {
+   "qty": 3,
+   "shared_id": "RB-BT50",
+   "material": "balsa",
+   "mass_g_each": 0.9,
+   "budget_g": 2,
+   "bbox_mm": [
+    141.4,
+    25.0,
+    3.2
+   ]
+  },
+  "maplewing1_ring_tail": {
+   "qty": 1,
+   "shared_id": "TAIL-54-ring",
+   "material": "PETG",
+   "mass_g_each": 94.6,
+   "budget_g": 250,
+   "bbox_mm": [
+    115.0,
+    115.0,
+    80.0
+   ]
+  },
+  "maplewing1_rotor_hub": {
+   "qty": 1,
+   "shared_id": "RB-54",
+   "material": "PETG",
+   "mass_g_each": 34.0,
+   "budget_g": 60,
+   "bbox_mm": [
+    73.7,
+    83.8,
+    26.7
+   ]
+  },
+  "maplewing1_rotor_blade": {
+   "qty": 3,
+   "shared_id": "RB-54",
+   "material": "balsa",
+   "mass_g_each": 18.8,
+   "budget_g": 30,
+   "bbox_mm": [
+    412.4,
+    60.0,
+    9.6
+   ]
+  }
+ }
+}

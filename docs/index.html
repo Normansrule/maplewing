@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maplewing · Ring-tailed, rotor-recovered rockets</title>
+<meta name="description" content="Open-source rockets with no fins: a ring tail for stability and a folding rotor that spins them down like a maple seed, gently enough to fly again. Simulator, printable CAD, costs and a configurator.">
+<meta name="theme-color" content="#0d0f11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef5fb" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Maplewing">
+<meta property="og:description" content="Ring-tailed, rotor-recovered rockets you can print, simulate and fly again.">
+<meta property="og:image" content="assets/readme/og.png">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="preload" href="vendor/fonts/archivo-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<script>try{const t=localStorage.getItem("mw-theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js","three/addons/":"./vendor/three/addons/"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" data-nav>
+  <a class="brand" href="#top" aria-label="Maplewing home">
+    <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><use href="#samara"/></svg>
+    <span>Maplewing</span>
+  </a>
+  <nav aria-label="Sections">
+    <ul>
+      <li><a href="#rockets">Rockets</a></li>
+      <li><a href="#spin">Why it spins</a></li>
+      <li><a href="#parts">Parts</a></li>
+      <li><a href="#cost">Cost</a></li>
+      <li><a href="#math">Equations</a></li>
+      <li><a href="#get">Get the app</a></li>
+    </ul>
+  </nav>
+  <div class="nav-end">
+    <a class="btn btn--ghost btn--sm" href="https://github.com/Normansrule/maplewing">GitHub</a>
+    <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top" data-hero aria-labelledby="hero-title">
+    <canvas aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <p class="eyebrow">Open-source rocketry · design stage</p>
+      <h1 id="hero-title">Rockets that come home like maple seeds.</h1>
+      <p class="lede">No fins to snap. A ring tail keeps it straight, and a folded rotor opens at the top so it spins down gently enough to fly again.</p>
+      <div class="cta">
+        <a class="btn btn--red" href="app/">Open the configurator</a>
+        <a class="btn btn--ghost" href="#get">Download the desktop app</a>
+      </div>
+      <p class="sr-only">Animation: a maple seed spins down and turns into the Seedling rocket, which launches, opens its three-blade rotor at the top of its flight, spins slowly back to the launch pad and launches again.</p>
+    </div>
+    <div class="hero-hud" aria-hidden="true">
+      <div class="caption" data-caption><b>Samara</b><span>A maple seed spins as it falls.</span></div>
+      <div class="flight">Flight <span data-flight>01</span></div>
+    </div>
+    <button class="hero-pause" type="button" data-pause aria-pressed="false"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor"/></svg><span>Pause</span></button>
+  </section>
+
+  <section class="band" aria-label="Key numbers">
+    <ul class="stats">
+      <li><b data-stat="land" data-dec="1">4.4</b><span>m/s Seedling landing under its rotor</span></li>
+      <li><b data-stat="apogee">263</b><span>m Seedling apogee on a C6-5</span></li>
+      <li><b data-stat="rockets">5</b><span>rockets on one shared framework</span></li>
+      <li><b data-stat="parts">7</b><span>parts to print or cut today</span></li>
+      <li><b data-stat="cost" data-prefix="$" data-dec="0">89</b><span>Seedling first day, at listed prices</span></li>
+    </ul>
+    <p class="band-note">Every number on this page comes from the simulator, the CAD or the parts list in the repository. Nothing has been flown yet.</p>
+  </section>
+
+  <section class="sec" id="tiers" aria-labelledby="tiers-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">One shape, three sizes</p>
+      <h2 id="tiers-title">From an afternoon build to a university airframe.</h2>
+    </div>
+    <div class="tiers">
+      <article class="tier reveal">
+        <span class="tier-k">01</span><h3>Seedling</h3><p class="tier-p">DIY · about $30–150</p>
+        <p>A water rocket and an A–D model rocket with printed ring tails and a printed folding rotor. The motor's own ejection charge frees the rotor, so there is nothing to wire.</p>
+        <ul><li>Build in an afternoon</li><li>Target: 10 flights per airframe</li><li>CAD and ground tests ready</li></ul>
+      </article>
+      <article class="tier reveal">
+        <span class="tier-k">02</span><h3>Sapling</h3><p class="tier-p">University team · high power</p>
+        <p>A fiberglass or carbon airframe with a carbon ring tail. Commercial dual-deploy altimeters release a drogue, then the rotor, and every flight keeps a backup parachute.</p>
+        <ul><li>Level 1 to Level 3 certified motors</li><li>Target: 5 flights per airframe</li><li>Paper and simulation today</li></ul>
+      </article>
+      <article class="tier tier--muted reveal">
+        <span class="tier-k">03</span><h3>Canopy</h3><p class="tier-p">Full scale · paper study</p>
+        <p>An honest look at what a ring-tail, rotor-recovered orbital launcher would gain and lose, set against propulsive landing. Rotary Rocket's Roton tried rotors in 1999; Falcon 9 and New Shepard won with engines.</p>
+        <ul><li>Public-textbook depth only</li><li>Held for export-control review</li><li>Not part of this release</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec sec--carbon" id="rockets" aria-labelledby="rockets-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The lineup</p>
+      <h2 id="rockets-title">Six configurations, one framework.</h2>
+      <p class="sub">Every stage lands on its own. Built from shared modules in <code>sim/lineup.py</code>. Each is checked against the scope rules in code: certified motors only, no guidance, a backup parachute on every rotor stage. Apogees are vertical-flight upper bounds; real flights land lower. Bars use a logarithmic scale.</p>
+    </div>
+    <div class="lineup" data-lineup></div>
+  </section>
+
+  <section class="sec" id="spin" aria-labelledby="spin-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Why it spins</p>
+      <h2 id="spin-title">It spins because it falls.</h2>
+      <p class="sub">Air rushing up through the rotor turns it, and the turning blades hold the rocket up. That is autorotation, the same thing a maple seed does. The blades are fixed at 6° of pitch, which the blade-element model found to be the best setting. In descent the rotor acts like a disc with a drag coefficient of about 1.08. A round parachute is about 1.5, so a rotor needs to be a little wider to land as softly. Drone drop tests will measure the real number.</p>
+    </div>
+    <div class="spin" data-spin>
+      <div class="spin-viz" aria-hidden="true">
+        <svg viewBox="-110 -110 220 220" class="rotor" data-rotor>
+          <circle r="104" class="disc"/>
+          <g class="blades"><path class="bl" d="M14 -8 L98 -12 Q105 0 98 12 L14 8 Z"/><path class="bl" transform="rotate(120)" d="M14 -8 L98 -12 Q105 0 98 12 L14 8 Z"/><path class="bl" transform="rotate(240)" d="M14 -8 L98 -12 Q105 0 98 12 L14 8 Z"/></g>
+          <circle r="11" class="hubc"/>
+        </svg>
+      </div>
+      <form class="spin-ctl" onsubmit="return false">
+        <div class="field"><label for="spin-m">Landing mass</label><output for="spin-m">81 g</output>
+          <input id="spin-m" type="range" min="40" max="400" step="1" value="81"></div>
+        <div class="field"><label for="spin-d">Rotor or parachute diameter</label><output for="spin-d">30 cm</output>
+          <input id="spin-d" type="range" min="15" max="90" step="1" value="30"></div>
+        <div class="vs">
+          <div><span>Rotor (C = 1.08)</span><b data-v-rotor>4.4 m/s</b><i class="bar bar--red" data-bar-rotor></i></div>
+          <div><span>Parachute, same size (C = 1.5)</span><b data-v-chute>3.7 m/s</b><i class="bar" data-bar-chute></i></div>
+        </div>
+        <p class="verdict" data-verdict aria-live="polite"></p>
+        <div class="eq" data-tex="v=\sqrt{\dfrac{2\,m\,g}{\rho\,C\,\tfrac{\pi}{4}D^{2}}}"></div>
+        <p class="fine">Air density for a 1,300 m field, as in the simulator. Starts at Seedling: 81 g with a spent motor and a 0.30 m rotor.</p>
+      </form>
+    </div>
+    <div class="trade reveal">
+      <div><h3>Ring tail, honestly</h3><p>In the sim a ring tail costs about 16–17% of apogee against fins of the same stability. In return it is compact, stiff and hard to break on landing. Stability is proven with simulation and swing tests and shown to the range safety officer (RSO).</p></div>
+      <div><h3>Rotor, honestly</h3><p>Descent is about the same as a parachute's, with less fabric but more mechanism and spin loads. We measure it against a parachute instead of assuming it is better, and every high-power Maplewing keeps a backup parachute.</p></div>
+      <div><h3>History, honestly</h3><p>Rotary Rocket's Roton flew rotor tests in 1999 and was abandoned. Propulsive landing won at full scale. Maplewing is about small reusable rockets that are fun to fly again, not a claim to beat Falcon 9.</p></div>
+    </div>
+  </section>
+
+  <section class="sec sec--paper" id="parts" aria-labelledby="parts-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Print the parts</p>
+      <h2 id="parts-title">Parametric CAD, ready to print.</h2>
+      <p class="sub">Pick a part to turn it in 3D or download its STL. Drawn in CadQuery from <code>cad/maplewing_parts.py</code>. Measure your body tube or bottle first and change the parameters, because the fit is set for 24.8 mm BT-50 tube and a 105 mm bottle. Print in PETG with thin walls, and cut blades from balsa sheet to the outline. Masses are from the CAD; red ones are over the simulator's budget and the sim already uses the heavier figure.</p>
+    </div>
+    <button class="assembly reveal" type="button" data-part="seedling_assembly" aria-haspopup="dialog">
+      <img src="assets/renders/seedling_assembly.png" alt="Seedling assembled: white BT-50 tube and nose, black printed ring tail at the base, red rotor hub near the top and three balsa blades spread open" width="1600" height="1000" loading="lazy">
+      <span>Seedling, assembled with its rotor open <em>Open in 3D</em></span>
+    </button>
+    <div class="parts" data-parts></div>
+  </section>
+
+  <section class="sec" id="cost" aria-labelledby="cost-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">What it costs</p>
+      <h2 id="cost-title">Real listed prices, with the link and the date.</h2>
+      <p class="sub" data-bom-csv></p>
+    </div>
+    <div class="bom">
+      <div class="tabs" role="tablist" aria-label="Rocket" data-bom-tabs></div>
+      <div id="bom-panel" role="tabpanel" data-bom tabindex="0"></div>
+      <p class="fine">“Listed” prices come from retailer pages on the date shown; “verified” ones were checked at the vendor; “filament” lines are CAD mass times a $20.99/kg PETG spool. Shipping and tax are extra. Large high-power reloads and cases are left blank until there are quotes. Download the <a href="https://github.com/Normansrule/maplewing/blob/main/exports/bom/maplewing-bom.csv">full parts list (CSV)</a>.</p>
+    </div>
+  </section>
+
+  <section class="sec sec--carbon" id="math" aria-labelledby="math-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The equations</p>
+      <h2 id="math-title">The physics, in the open.</h2>
+      <p class="sub">The simulator runs these equations in Python and in your browser, and a test in CI checks that both give the same answers.</p>
+    </div>
+    <div class="eqs">
+      <article class="reveal"><h3>Flight</h3><div data-tex="m\dot v = F(t) - \tfrac12\rho v^{2} C_D\,C_M(M)\,\tfrac{\pi d^{2}}{4} - m\,g(z)"></div><p>Vertical, multi-stage, explicit Euler at 5 ms. Thrust is the certified curve from ThrustCurve.org; motor mass falls with impulse delivered.</p></article>
+      <article class="reveal"><h3>Stability</h3><div data-tex="\text{margin}=\frac{x_{cp}-x_{cg}}{d},\qquad N_{eq}=\frac{\pi D_m}{h}"></div><p>Extended Barrowman. The ring tail is treated as <span data-tex="N_{eq}"></span> panels of span <span data-tex="h=(D_m-d)/2"></span>, a community method that swing tests will check.</p></article>
+      <article class="reveal"><h3>Rotor</h3><div data-tex="dT = N q c\,dr\,(C_l\cos\phi + C_d\sin\phi),\quad Q(\Omega)=0,\ T=W"></div><p>Blade-element autorotation: find the spin rate where torque is zero, then the descent speed where thrust equals weight. Best fixed pitch 6°.</p></article>
+      <article class="reveal"><h3>Water</h3><div data-tex="P = P_0\left(\frac{V_{a0}}{V_a}\right)^{\gamma},\quad v_e=\sqrt{\frac{2(P-P_a)}{\rho_w}}"></div><p>Adiabatic water phase, then choked and unchoked air blow-down. 60 psi in flight, proof-tested full of water at 90 psi.</p></article>
+    </div>
+    <p class="more reveal"><a class="btn btn--ghost" href="https://github.com/Normansrule/maplewing/blob/main/notes/EQUATIONS.md">All equations, constants and sources</a></p>
+  </section>
+
+  <section class="sec" id="status" aria-labelledby="status-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Honest status</p>
+      <h2 id="status-title">Simulated, modeled or measured.</h2>
+      <p class="sub">Each claim says which. Nothing has been built or flown yet.</p>
+    </div>
+    <div class="tbl reveal">
+      <table class="status">
+        <thead><tr><th scope="col">Claim</th><th scope="col">Evidence today</th></tr></thead>
+        <tbody>
+          <tr><td>Python and browser simulators agree</td><td><span class="st st--verified">tested</span> 0.000% apogee difference, every rocket, in CI</td></tr>
+          <tr><td>Scope rules are enforced</td><td><span class="st st--verified">tested</span> <code>validate()</code> rejects seven rule-breaking designs</td></tr>
+          <tr><td>Rotor lands Seedling at 4.4 m/s</td><td><span class="st st--estimate">modeled</span> blade-element model; drop test from 8 m pending</td></tr>
+          <tr><td>Ring tail is stable</td><td><span class="st st--estimate">modeled</span> Barrowman-style estimate; swing test pending</td></tr>
+          <tr><td>Printed parts weigh what the CAD says</td><td><span class="st st--estimate">modeled</span> CAD volume × density; weigh real prints</td></tr>
+          <tr><td>Airframe flies 10 times</td><td><span class="st st--needs-quote">not yet</span> nothing has been built or flown</td></tr>
+          <tr><td>High-power flights (Maplewing-1 and 2)</td><td><span class="st st--needs-quote">paper only</span> wait on the altimeter-charge rule and certification</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec sec--sky" id="get" aria-labelledby="get-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Get the app</p>
+      <h2 id="get-title">Shape it, check it, fly it again.</h2>
+      <p class="sub">The configurator shows the stability margin, apogee, descent rate, drift and cost as you change the rocket, plus all six lineup configurations. It runs the same physics as the Python simulator.</p>
+    </div>
+    <div class="get">
+      <a class="getcard getcard--main" href="app/">
+        <img src="assets/readme/app-light.png" alt="The Maplewing configurator: stability margin, apogee, descent rate, drift and cost across the top, a side view of the rocket with its center of gravity and center of pressure, and sliders for motor, airframe and recovery" width="1440" height="900" loading="lazy">
+        <span><b>Open in your browser</b><small>Nothing to install</small></span>
+      </a>
+      <div class="getdl" data-release>
+        <a class="dl" data-dl="win" href="https://github.com/Normansrule/maplewing/releases/latest"><b>Windows</b><small>Installer · .msi</small></a>
+        <a class="dl" data-dl="mac" href="https://github.com/Normansrule/maplewing/releases/latest"><b>macOS</b><small>Apple silicon and Intel · .dmg</small></a>
+        <a class="dl" data-dl="linux" href="https://github.com/Normansrule/maplewing/releases/latest"><b>Linux</b><small>.AppImage · .deb</small></a>
+        <p class="fine">The desktop apps are built by GitHub Actions with Tauri and work offline. They are not code-signed yet: on Windows choose More info, then Run anyway; on macOS right-click the app and choose Open the first time.</p>
+        <pre class="code"><code>git clone https://github.com/Normansrule/maplewing ~/projects/maplewing
+cd ~/projects/maplewing && make setup && make test</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec--carbon rules" id="rules" aria-labelledby="rules-title">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Scope and safety</p>
+      <h2 id="rules-title">Hard rules.</h2>
+      <p class="sub">Pull requests that break them are closed.</p>
+    </div>
+    <ul class="rulelist reveal">
+      <li>Commercial certified motors and passive, unguided rockets only, flown under the National Association of Rocketry (NAR) or Tripoli Rocketry Association (TRA) safety codes at sanctioned launches.</li>
+      <li>No propellant or motor making, no energetics handling, no DIY pyro firing circuits, no active guidance, no steerable fins and no actively controlled rotor pitch.</li>
+      <li>Recovery deploys by motor ejection (Seedling) or redundant commercial altimeters (Sapling). Rotors are fixed-pitch and passive. The logger only records.</li>
+      <li>Water rockets: rated plastic bottles only, a tested pressure limit with margin and a remote release. Never metal or glass.</li>
+      <li>Full-scale work stays at public-textbook depth and goes through export-control review before anything is published.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">
+  <div>
+    <a class="brand" href="#top"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><use href="#samara"/></svg><span>Maplewing</span></a>
+    <p>Code MIT · docs, CAD and data CC BY-SA 4.0 · logger PCB CERN-OHL-S. Not affiliated with NAR, Tripoli, Estes, AeroTech or Cesaroni.</p>
+  </div>
+  <p><a href="https://github.com/Normansrule/maplewing">Source on GitHub</a> · <a href="app/">Configurator</a> · <a href="https://github.com/Normansrule/maplewing/releases">Releases</a></p>
+</footer>
+
+<dialog class="inspector" data-inspector aria-labelledby="ins-title">
+  <div class="ins-body">
+    <canvas aria-label="Interactive 3D view of the part: drag to turn, scroll or pinch to zoom"></canvas>
+    <div class="ins-side">
+      <h2 id="ins-title" data-title>Part</h2>
+      <dl data-facts></dl>
+      <a class="btn btn--red" data-download href="#" download>Download STL</a>
+      <form method="dialog"><button class="btn btn--ghost" type="submit">Close</button></form>
+    </div>
+  </div>
+</dialog>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="samara" viewBox="0 0 32 32"><path d="M8.5 24.5c-2.4-.2-4-2-3.6-4.1.4-2 2.6-3 4.6-2.4l.6.2C13 11 18.6 5.6 26.6 3.6c1.4-.4 2.2 1 1.3 2.1-5.7 6.4-10.1 11.8-15 16.9l.2.6c.4 2-1 3.6-3 3.4z" fill="currentColor"/><circle cx="8.6" cy="21.2" r="3" fill="var(--red)"/></symbol>
+  </defs>
+</svg>
+
+<script src="data/site-data.js"></script>
+<script src="vendor/katex/katex.min.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+<script type="module" src="assets/js/hero.js"></script>
+<script type="module" src="assets/js/viewer.js"></script>
+</body>
+</html>
